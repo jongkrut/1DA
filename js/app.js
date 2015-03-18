@@ -849,7 +849,7 @@ app.controller('cartCtrl',function($scope,$http,$stateParams,$ionicModal,$ionicL
 		$scope.modal2.remove();
 	});
 
-	$scope.openModal = function (index, itemId = null){
+	$scope.openModal = function (index, itemId){
 		if(index == 1) $scope.modal1.show();
       	else{
       		$scope.item = Cart.getItem(itemId);

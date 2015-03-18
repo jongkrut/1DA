@@ -3,7 +3,7 @@
 <ion-nav-bar class="navbar" align-title="center">
 	<ion-nav-buttons side="left">
 		<button class="button-clear" ng-click="toggleLeft()">
-			<i class="ion-navicon-round icon-header"> FATBURGER </i> 
+			<i class="ion-navicon-round icon-header"> FATBURGER </i>
 		</button>
 	</ion-nav-buttons>
 
@@ -27,7 +27,7 @@
 				<legend align="center" class="font_oswald_normal_300" style="font-size:18px;"> WELCOME BACK </legend>
 				<font style="color:#ffd909; font-weight:bold; font-size:24px;" class="font_oswald_normal_300"> {{customer.customer_name}} </font><br/>
 				<div ng-hide="defaultAddress==''">
-					<font style="color:white;"> 
+					<font style="color:white;">
 						You are using<button ng-click="openModal()" class="button-clear" style="color:#ffd909;font-weight:bold;text-decoration:underline;">{{defaultAddress.address_name}}</button>as your current search location. <br/>
 					</font>
 				</div>
@@ -54,18 +54,22 @@
 
 	<div class="find_loc" ng-show="newAddress">
 		<span class="font-white font_oswald_normal_300">
-			TAP THE BURGER <br/>TO FIND OUR NEARBY STORE <br/><br/>
-			<div ng-click="toMap()">
-				<img alt="FatBurger" src="img/burgerlogo.png" id="FatBurger" style="height:200px;width:auto;"/>
-			</div>
+			<br/>
+			TAP THE BURGER <br/>TO FIND OUR NEARBY STORE
 		</span>
-	</div>	
+	</div>
+
+	<div ng-click="toMap()" class="find_loc" ng-show="newAddress">
+				<img alt="FatBurger" src="img/burgerlogo.png" id="FatBurger" style="height:200px;width:auto;"/>
+	</div>
 
 	<div class="find_loc" ng-show="newAddress">
-		<span ng-hide="defaultAddress==''" class="font-white font_oswald_normal_300 line_legend">&nbsp;OR&nbsp;
-		</span><br/>
-		<span class="font-white font_oswald_normal_300">WRITE DOWN YOUR SPECIFIC ADDRESS</span><br/>
-		<a class="button button_yellow_on_dark" ui-sref="location-search"><i class="icon ion-edit"></i>  Enter Adress </a>
+		<span ng-hide="defaultAddress==''" class="font-white font_oswald_normal_300 line_legend">&nbsp;OR&nbsp;</span>
+	</div>
+
+	<div class="find_loc" ng-show="newAddress">
+		<span class="font-white font_oswald_normal_300">WRITE DOWN YOUR SPECIFIC ADDRESS<br/></span>
+		<a class="button button_yellow_on_dark" ui-sref="location-search" style="margin-top:15px"><i class="icon ion-edit"></i>  Enter Adress </a>
 	</div>
 
 </ion-content>
@@ -80,8 +84,8 @@
     <ion-content>
     	<div class="list padding">
 			<ion-radio ng-repeat="item in addresses"
-                   ng-value="item.address_id" 
-                   ng-model="data.selected"       
+                   ng-value="item.address_id"
+                   ng-model="data.selected"
                    name="server-side"
 				   ng-switch on="item.address_type">
 					<addrType ng-switch-when="1">
@@ -89,43 +93,43 @@
 						<p>	{{item.address_name}} <br/>
 							{{item.tower_division}} {{item.floor}} <br/>
 						    {{item.address_content}}
-							{{item.room_unit}}							
-						</p>	
+							{{item.room_unit}}
+						</p>
 					</addrType>
 					<addrType ng-switch-when="2">
 						<h2>Rumah</h2>
 						<p>	{{item.address_name}}
-						    {{item.address_content}}						
-						</p>	
+						    {{item.address_content}}
+						</p>
 					</addrType>
 					<addrType ng-switch-when="3">
 						<h2>Apartment</h2>
 						<p>	{{item.address_name}} <br/>
 							{{item.tower_division}} {{item.floor}} {{item.room_unit}} <br/>
-						    {{item.address_content}}															
-						</p>	
+						    {{item.address_content}}
+						</p>
 					</addrType>
 					<addrType ng-switch-when="4">
 						<h2>Hotel</h2>
 						<p>	{{item.address_name}}
 						    {{item.floor}} {{item.room_unit}} <br/>
-						    {{item.address_content}}								
-						</p>	
+						    {{item.address_content}}
+						</p>
 					</addrType>
 					<addrType ng-switch-when="5">
 						<h2>Ruko/Rukan</h2>
 						<p> {{item.address_name}}
 						    {{item.floor}} {{item.room_unit}} <br/>
-							{{item.address_content}}					
-						</p>	
+							{{item.address_content}}
+						</p>
 					</addrType>
 					<addrType ng-switch-when="6">
 						<h2>Kost</h2>
 						<p>	{{item.address_name}}
 						    {{item.floor}} {{item.room_unit}} <br/>
-							{{item.address_content}}								
-						</p>	
-					</addrType>			
+							{{item.address_content}}
+						</p>
+					</addrType>
 			</ion-radio>
        	</div>
     </ion-content>

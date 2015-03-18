@@ -74,7 +74,7 @@
 
 	<gap:config-file platform="ios" parent="CFBundleVersion"><string>0.2.1</string></gap:config-file>
 
-    <access origin="*"/> <!-- allow local pages -->
-	<access origin="*.pushwoosh.com"/>
+  <access origin="*"/> <!-- allow local pages -->
+
 
 </widget>

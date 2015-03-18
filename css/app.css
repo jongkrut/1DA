@@ -1,5 +1,5 @@
 @font-face {
-  font-family: "Oswald"; 
+  font-family: "Oswald";
   src: url("../fonts/Oswald-Regular.ttf") format("truetype");
 }
 
@@ -109,8 +109,8 @@
 .z {
 	overflow-x: scroll;
 	overflow-y: hidden;
-	display: -webkit-box;  
-        display: -moz-box; 
+	display: -webkit-box;
+        display: -moz-box;
 	background-color:#931217;
 	-webkit-overflow-scrolling:touch;
 }
@@ -274,7 +274,7 @@
 #map { height: 500px; width:100%;}
 
 .select_size {
-	height:50px;	
+	height:50px;
 }
 .size_input {
 	max-width:100% !important;
@@ -427,38 +427,38 @@ legend {
 .table_header{
 	background-color:#3d3d3d;
 	color:#ffd909;
-	border-top-left-radius: 3px; 
-	border-top-right-radius: 3px; 
-	border-top: 1px #bdbdbd solid; 
-	border-right: 1px #bdbdbd solid; 
-	border-left: 1px #bdbdbd solid; 
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+	border-top: 1px #bdbdbd solid;
+	border-right: 1px #bdbdbd solid;
+	border-left: 1px #bdbdbd solid;
 	font-size:12px;
 }
 
 .table_footer{
 	background-color:white;
-	border-bottom-left-radius: 3px; 
-	border-bottom-right-radius: 3px; 
-	border-bottom: 1px #bdbdbd solid; 
-	border-right: 1px #bdbdbd solid; 
-	border-left: 1px #bdbdbd solid; 
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
+	border-bottom: 1px #bdbdbd solid;
+	border-right: 1px #bdbdbd solid;
+	border-left: 1px #bdbdbd solid;
 	font-size:12px;
 }
 
 .footer_left{
-	border-bottom-left-radius: 3px; 
+	border-bottom-left-radius: 3px;
 	border-left: 1px #bdbdbd solid;
-	border-bottom: 1px #bdbdbd solid; 
+	border-bottom: 1px #bdbdbd solid;
 }
 
 .footer_mid{
-	border-bottom: 1px #bdbdbd solid; 
+	border-bottom: 1px #bdbdbd solid;
 }
 
 .footer_right{
-	border-bottom-right-radius: 3px; 
-	border-right: 1px #bdbdbd solid; 
-	border-bottom: 1px #bdbdbd solid; 
+	border-bottom-right-radius: 3px;
+	border-right: 1px #bdbdbd solid;
+	border-bottom: 1px #bdbdbd solid;
 }
 
 .table_border_progress{
@@ -583,6 +583,6 @@ legend {
 
 .wood_bg{
 	background-color:#eee;
-	background-image: url(img/left_panel_bg.jpg) !important; 
+	background-image: url(img/left_panel_bg.jpg) !important;
 	background-repeat: repeat-y !important;
 }

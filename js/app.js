@@ -1,4 +1,5 @@
 var url = "http://128.199.190.218/connector";
+var company_id = 2;
 var app = angular.module('indexApp', [
   "sdfilters",
   "cart",
@@ -242,7 +243,7 @@ app.controller('loginCtrl',function($scope,$http,Customer,Search,$state){
 		$state.go('home');
 	}
 	$scope.doLogin = function (user) {
-			var urlLogin = url + "/login.php?user="+user.email+":"+user.password+"&callback=JSON_CALLBACK";
+			var urlLogin = url + "/login.php?company_id="+company_id+"user="+user.email+":"+user.password+"&callback=JSON_CALLBACK";
 			$http.jsonp(urlLogin).success(function(data) {
 				if(data.login == 0) {
 					$scope.errorLogin = 1;
@@ -257,23 +258,21 @@ app.controller('loginCtrl',function($scope,$http,Customer,Search,$state){
 					$state.go('home');
 				}
 			});
-    };
-    $scope.doSignUp = function (user) {
-    	$http.defaults.useXDomain = true;
+  };
+  $scope.doSignUp = function (user) {
+    $http.defaults.useXDomain = true;
 		$http({
 		    url: url + "/signup.php",
 		    method: "POST",
 		    headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'},
 		    data: user
-		})
-		.then(function(response) {
-			console.log(response.data);
+	  }).then(function(response) {
 			if(response.data.customer_id > 0) {
 				Customer.init(response.data);
 		    	$state.go('home');
 			}
-		});
-    };
+	  });
+  };
 });
 
 app.controller('midLoginCtrl',function($scope,$stateParams,$http,$location,Customer,Search){

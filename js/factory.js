@@ -33,7 +33,7 @@ angular.module('cart',[]).factory('Cart',function(){
 				if(items[i].attr !== undefined) {
 					for(var j = 0; j < items[i].attr.length ; j++){
 						attr_total += (parseInt(items[i].qty) * parseInt(items[i].attr[j].attribute_price));
-					}	
+					}
 				}
 			}
 			return (total+attr_total);
@@ -89,13 +89,19 @@ angular.module('search',[]).factory('Search',function(){
 			localStorage.setItem("latitude","");
 			localStorage.setItem("longitude","");
 		},
+		setArea: function(area) {
+			localStorage.setItem("area",JSON.stringify(area));
+		},
+		getArea: function(){
+			return JSON.parse(localStorage.getItem("area"));
+		},
 		getAll: function(){
 			return localStorage.getItem("search");
 		},
 		addOutlet: function(outlet) {
-			var items = JSON.parse(localStorage.getItem("search"));
-			items.push(outlet);
-			localStorage.setItem("search",JSON.stringify(items));
+			//var items = JSON.parse(localStorage.getItem("search"));
+			//items.push(outlet);
+			localStorage.setItem("search",outlet);
 		},
 		remove: function(){
 			localStorage.setItem("search",JSON.stringify([]));

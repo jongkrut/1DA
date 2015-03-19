@@ -31,7 +31,7 @@
 						You are using<button ng-click="openModal()" class="button-clear" style="color:#ffd909;font-weight:bold;text-decoration:underline;">{{defaultAddress.address_name}}</button>as your current search location. <br/>
 					</font>
 				</div>
-				<font style="color:white;"> <button ng-click="openModal()" class="button-clear"> Tap here to change location. </button> </font>
+				<font style="color:white;" > <button ng-click="openModal()" class="button-clear" ng-hide="defaultAddress==''"> Tap here to change location. </button> </font>
 			</fieldset>
 		</div>
 
@@ -64,12 +64,12 @@
 	</div>
 
 	<div class="find_loc" ng-show="newAddress">
-		<span ng-hide="defaultAddress==''" class="font-white font_oswald_normal_300 line_legend">&nbsp;OR&nbsp;</span>
+		<span class="font-white font_oswald_normal_300 line_legend">&nbsp;OR&nbsp;</span>
 	</div>
 
 	<div class="find_loc" ng-show="newAddress">
 		<span class="font-white font_oswald_normal_300">WRITE DOWN YOUR SPECIFIC ADDRESS<br/></span>
-		<a class="button button_yellow_on_dark" ui-sref="location-search" style="margin-top:15px"><i class="icon ion-edit"></i>  Enter Adress </a>
+		<a class="button button_yellow_on_dark" ui-sref="location-search" style="margin-top:15px;width:170px"><i class="icon ion-edit"></i>  Enter Address </a>
 	</div>
 
 </ion-content>

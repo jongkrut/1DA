@@ -8,15 +8,14 @@
         </ion-header-bar>
 
         <ion-content style="background-color:#eee;background-image: url(img/left_panel_bg.jpg) !important; background-repeat: repeat-y !important;z-index:99;">
-            <div class="padding"><img class="full-image" ng-src="http://117.102.249.127/inc/upload/{{menu.menu_image}}" style="width:100%;height:auto"/></div>
+            <div class="padding"><img class="full-image" ng-src="http://128.199.190.218/images/fatburger/menu{{menu.menu_image}}" style="width:100%;height:auto"/></div>
             <div class="list">
                 <h3 class="padding font-white" style="text-align:left !important;margin-top:-10px;">{{menu.menu_name}}</h3>
         	    <div class="padding font-white" style="margin-top:-20px;">{{ menu.menu_description}}</div>
                 <hr style="margin:0 10px 0 10px;">
-                <div class="item item-input padding">
+                <div class="item item-input padding" style="width:100%">
                     <span class="input-label font-white">Quantity : </span>
-                    <input type="text" size=5 name="input" readonly ng-model="menu.qty" placeholder="Qty" ng-init="menu.qty=1" style="background-color:white !important; margin:0 10px 0 0 !important;text-align: center;padding-right: 0px !important;"/>
-                    <span class="input-label font-white" style="margin-right: 50px;"> Item(s) </span>
+                    <input type="text" size=5 name="input" readonly ng-model="menu.qty" placeholder="Qty" ng-init="menu.qty=1" style="width:50px !important;background-color:white !important; margin:0 0px 0 0 !important;text-align: center;padding-right: 0px !important;"/>
                     <button class="button-clear" style="height: 30px; width: 47px;" ng-click="menu.qty = menu.qty+1">
                         <img src="img/plus_button.png" style="height:30px !important;">
                     </button>
@@ -94,7 +93,7 @@
 <div ng-repeat="category in menuCategories" ng-show="tab == category.category_id">
 	<div class="list">
 		<a ng-repeat="menu in menus" class="item item-thumbnail-left item-text-wrap item_bb" href ng-click="openModal(menu.menu_id)">
-			<img ng-src="http://117.102.249.127/inc/upload/{{menu.menu_image}}" alt="{{menu.menu_name}}" style="width:100px;"/>
+			<img ng-src="http://128.199.190.218/images/fatburger/menu{{menu.menu_image}}" alt="{{menu.menu_name}}" style="width:100px;"/>
 			<h3 style="font-weight:bold">{{menu.menu_name}}</h3>
 			<p>{{menu.menu_description}}</p>
 		</a>

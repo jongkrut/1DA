@@ -552,7 +552,7 @@ legend {
 .line_legend, .line_legend_black {
     text-align: center;
     display: table;
-    width: 100%;
+    width: 90%;
 }
 
 .line_legend > span, .line_legend:before, .line_legend:after, .line_legend_black > span, .line_legend_black:before, .line_legend_black:after {

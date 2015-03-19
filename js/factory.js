@@ -136,6 +136,7 @@ angular.module('customer',[]).factory('Customer',function($rootScope,$http){
 		init: function(customer){
 			localStorage.setItem("customer",JSON.stringify(customer));
 			localStorage.setItem("customer_address",JSON.stringify([]));
+			$rootScope.$broadcast('state.login');
 		},
 		login: function(customer,address){
 			localStorage.setItem("customer",JSON.stringify(customer));

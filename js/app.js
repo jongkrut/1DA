@@ -28,7 +28,7 @@ app.config(['$stateProvider', function($stateProvider) {
 					templateUrl : 'login.html',
 					controller : 'loginCtrl'
 	}).state('midlogin', {	url : '/login-mid/:outlet_id/:brand_id',
-							templateUrl : 'login.html',
+							templateUrl : 'mid-login.html',
 							controller : 'midLoginCtrl'
 	}).state('home', { 	url : '/',
 						cache : false,
@@ -177,10 +177,10 @@ app.controller('panelCtrl',function($scope,$location,Customer){
 	$scope.logged_in = Customer.isLogged();
 	$scope.$on('state.update', function () {
     	$scope.logged_in = false;
-    });
-    $scope.$on('state.login', function () {
+  });
+  $scope.$on('state.login', function () {
     	$scope.logged_in = true;
-    });
+  });
 });
 
 app.controller('addressCtrl',function($scope,$http,$location,Customer,$ionicSideMenuDelegate,Search){
@@ -238,12 +238,13 @@ app.controller('accountCtrl',function($scope,$http,Customer,$state){
 
 app.controller('loginCtrl',function($scope,$http,Customer,Search,$state){
 	$scope.errorLogin = 0;
+  $scope.errorSignup = 0;
 	$scope.logged_in = Customer.isLogged();
 	if($scope.logged_in == true) {
 		$state.go('home');
 	}
 	$scope.doLogin = function (user) {
-			var urlLogin = url + "/login.php?company_id="+company_id+"user="+user.email+":"+user.password+"&callback=JSON_CALLBACK";
+			var urlLogin = url + "/login.php?company_id="+company_id+"&user="+user.email+":"+user.password+"&callback=JSON_CALLBACK";
 			$http.jsonp(urlLogin).success(function(data) {
 				if(data.login == 0) {
 					$scope.errorLogin = 1;
@@ -260,6 +261,7 @@ app.controller('loginCtrl',function($scope,$http,Customer,Search,$state){
 			});
   };
   $scope.doSignUp = function (user) {
+    user.company_id = company_id;
     $http.defaults.useXDomain = true;
 		$http({
 		    url: url + "/signup.php",
@@ -267,19 +269,24 @@ app.controller('loginCtrl',function($scope,$http,Customer,Search,$state){
 		    headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'},
 		    data: user
 	  }).then(function(response) {
-			if(response.data.customer_id > 0) {
-				Customer.init(response.data);
-		    	$state.go('home');
-			}
+        if(response.data.customer_id > 0) {
+          $scope.errorSignup = 0;
+		      Customer.init(response.data);
+    	    $state.go('home');
+			  } else {
+          $scope.errorSignup = 1;
+        }
 	  });
   };
 });
 
 app.controller('midLoginCtrl',function($scope,$stateParams,$http,$location,Customer,Search){
+  $scope.errorLogin = 0;
+  $scope.errorSignup = 0;
 	$scope.outlet_id = $stateParams.outlet_id;
 	$scope.brand_id = $stateParams.brand_id;
 	$scope.doLogin = function (user) {
-			var urlLogin = url + "/login.php?user="+user.email+":"+user.password+"&callback=JSON_CALLBACK";
+			var urlLogin = url + "/login.php?company_id="+company_id+"&user="+user.email+":"+user.password+"&callback=JSON_CALLBACK";
 			$http.jsonp(urlLogin).success(function(data) {
 				if(data.login == 0) {
 					$scope.errorLogin = 1;
@@ -297,7 +304,22 @@ app.controller('midLoginCtrl',function($scope,$stateParams,$http,$location,Custo
 			});
     };
     $scope.doSignUp = function (user) {
-		console.log(user);
+      user.company_id = company_id;
+      $http.defaults.useXDomain = true;
+  		$http({
+  		    url: url + "/signup.php",
+  		    method: "POST",
+  		    headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'},
+  		    data: user
+  	  }).then(function(response) {
+          if(response.data.customer_id > 0) {
+            $scope.errorSignup = 0;
+  		      Customer.init(response.data);
+            $location.path('/checkout/'+$scope.outlet_id+'/'+$scope.brand_id);
+  			  } else {
+            $scope.errorSignup = 1;
+          }
+  	  });
     };
 });
 

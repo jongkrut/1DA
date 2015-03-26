@@ -90,6 +90,14 @@ app.config(['$stateProvider', function($stateProvider) {
 						url : '/promotion2/:page',
 						templateUrl : 'promotion2.html',
 						controller : 'promotionCtrl'
+  }).state('menu',{
+            url : '/menu/',
+            templateUrl : 'menu.html',
+            controller : 'menuCtrl'
+  }).state('menu2',{
+            url : '/menu-details/:category',
+            templateUrl : 'menu2.html',
+            controller : 'menuCtrl2'
 	}).state('feedback',{
 						url : '/feedback/',
 						templateUrl : 'feedback.html',
@@ -1230,5 +1238,97 @@ app.controller('aboutCtrl',function($scope,$stateParams,$ionicModal,$http,Cart,$
 	  	animation: 'slide-in-up'
 	}).then(function (modal) {
 		$scope.modal = modal;
+	});
+});
+
+app.controller('menuCtrl',function($scope,$stateParams,$http,Customer){
+	$scope.brand_id = 10;
+	$scope.logged_in = Customer.isLogged();
+	$scope.$on('state.update', function () {
+    	$scope.logged_in = false;
+    });
+	var urlLogin = url + "/outletMenuCategory.php?brand_id="+$scope.brand_id+"&callback=JSON_CALLBACK";
+	$http.jsonp(urlLogin).success(function(data){
+		  $scope.menuCategories = data.category;
+	});
+});
+
+app.controller('menuCtrl2',function($scope,$stateParams,$ionicModal,$http,$ionicLoading,$location,Customer){
+	$scope.brand_id = 10;
+	$scope.tab = $stateParams.category;
+	$scope.menuz = [];
+	$scope.menu = {};
+	var arrayLoaded = [];
+
+	$scope.logged_in = Customer.isLogged();
+	$scope.$on('state.update', function () {
+    	$scope.logged_in = false;
+    });
+
+	$scope.show = function() {
+	    $ionicLoading.show({
+	      template: 'Loading...'
+	    });
+	};
+	$scope.hide = function(){
+	    $ionicLoading.hide();
+	};
+
+
+	var urlLogin = url + "/outletMenuCategory.php?brand_id="+$scope.brand_id+"&callback=JSON_CALLBACK";
+	$http.jsonp(urlLogin).success(function(data){
+		$scope.menuCategories = data.category;
+		if($scope.tab !== "") {
+			urlLogin = url + "/outletMenu.php?category_id="+$scope.tab+"&callback=JSON_CALLBACK";
+			$http.jsonp(urlLogin).success(function(data){
+				$scope.menuz[$scope.tab] =data.menu;
+				arrayLoaded.push($scope.tab);
+				$scope.menus = $scope.menuz[$scope.tab];
+			});
+		}
+	});
+	$scope.loadMenu = function(a) {
+		$scope.tab = a;
+		if(arrayLoaded.indexOf(a) == -1 ) {
+			urlLogin = url + "/outletMenu.php?category_id="+a+"&callback=JSON_CALLBACK";
+			$http.jsonp(urlLogin).success(function(data){
+				$scope.show();
+				$scope.menuz[a] =data.menu;
+				arrayLoaded.push(a);
+				$scope.menus = $scope.menuz[a];
+				$scope.hide();
+			});
+		} else {
+			$scope.menus = $scope.menuz[a];
+		}
+	}
+
+	$scope.openModal = function (data){
+		$scope.menu_id = data;
+		$scope.menu = {};
+		var urlLogin = url + "/menuInformation.php?menu_id="+$scope.menu_id+"&callback=JSON_CALLBACK";
+		$http.jsonp(urlLogin).success(function(data){
+			$scope.menu = data.menu;
+			$scope.menu.qty = 1;
+			if(data.menu.size.length>0) {
+				$scope.menu.size_id = $scope.menu.size[0];
+			}
+			$scope.modal.show();
+		});
+
+  	};
+  	$scope.closeModal = function() {
+    	$scope.modal.hide();
+  	};
+
+	$ionicModal.fromTemplateUrl('myModalContent.html', {
+	  	scope: $scope,
+	  	animation: 'slide-in-up'
+	}).then(function (modal) {
+		$scope.modal = modal;
+	});
+
+	$scope.$on('$destroy', function () {
+	  $scope.modal.remove();
 	});
 });

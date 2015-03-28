@@ -143,7 +143,8 @@ app.run(function($rootScope,$ionicNavBarDelegate,$ionicSideMenuDelegate,$ionicPo
 		 if(logged == true) {
        Customer.refreshAddress();
 		 }
-     $http.get("http://128.199.235.202/area/fb.json").success(function(data){
+     $http.get("http://128.199.235.202/area/fb.json",{cache:false}).success(function(data){
+        console.log(data.fatburger.outlet);
         Search.setArea(data.fatburger);
      });
   });

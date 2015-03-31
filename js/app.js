@@ -63,7 +63,7 @@ app.config(['$stateProvider', function($stateProvider) {
 						templateUrl : 'search.html',
 						controller : 'searchCtrl'
 	}).state('restaurant', {
-						url : '/restaurant/:outlet_id/:brand_id',
+						url : '/restaurant/',
 						templateUrl : 'restaurant.html',
 						controller : 'restoCtrl'
 	}).state('order', {
@@ -161,18 +161,6 @@ app.run(function($rootScope,$ionicNavBarDelegate,$ionicSideMenuDelegate,$ionicPo
 		$ionicNavBarDelegate.back();
 	};
 
-	$ionicPopover.fromTemplateUrl('popover-account.html', {
-		scope: $rootScope,
-	}).then(function(popover) {
-	    $rootScope.popover = popover;
-	});
-
-	$rootScope.openPopover = function($event) {
-    	$rootScope.popover.show($event);
-	};
-	$rootScope.closePopover = function() {
-	    $rootScope.popover.hide();
-	};
 	$rootScope.$on('$destroy', function() {
 	    $rootSscope.popover.remove();
 	});
@@ -332,20 +320,17 @@ app.controller('midLoginCtrl',function($scope,$stateParams,$http,$location,Custo
     };
 });
 
-app.controller('homeCtrl',function($scope,$location,$ionicSideMenuDelegate,$ionicLoading,$http,$ionicModal,Customer,Search,$window){
-	$scope.newAddress = true;
+app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSideMenuDelegate,$ionicLoading,$http,$ionicModal,Customer,Search,$window){
 	$scope.logged_in = Customer.isLogged();
+  $scope.areaJson = Search.getArea();
 	$scope.data  = {};
+
 	$scope.$on('state.update', function () {
     	$scope.logged_in = false;
     	$scope.newAddress = true;
-    });
+  });
 	if($scope.logged_in == true){
 		$scope.customer = Customer.getCustomer();
-		$scope.defaultAddress = Customer.getDefaultAddress();
-		$scope.addresses = Customer.getAddress();
-		$scope.newAddress = false;
-		$scope.data.selected = $scope.defaultAddress.address_id;
 		Search.init();
 	}
 
@@ -357,68 +342,152 @@ app.controller('homeCtrl',function($scope,$location,$ionicSideMenuDelegate,$ioni
 	$scope.hide = function(){
 	    $ionicLoading.hide();
 	};
-    $scope.toMap = function(){
-		$location.path('/map-search');
-    };
 
-    $ionicModal.fromTemplateUrl('chooseAddress-modal.html', {
+  $scope.showSheet = function(){
+    var hideSheet = $ionicActionSheet.show({
+       buttons: [
+         { text: 'Pick Up' },
+         { text: 'Delivery' }
+       ],
+       titleText: 'Choose Your Service',
+       cancelText: 'Cancel',
+       cancel: function() {
+
+       },
+       buttonClicked: function(index) {
+        if(index==0) {
+          Search.setType(1);
+          $scope.data.selected = 46;
+          $scope.openModal(1);
+        }
+        else {
+          Search.setType(2);
+          $scope.data.selected = Customer.getDefaultAddress();
+          $scope.openModal(2);
+        }
+        return true;
+       }
+     });
+  };
+
+  $scope.toMap = function(){
+    $scope.show();
+    var areaJson = Search.getArea();
+    if(navigator.geolocation) {
+  	    navigator.geolocation.getCurrentPosition(function(position) {
+  				$scope.latitude = position.coords.latitude;
+  		    $scope.longitude = position.coords.longitude;
+  		    $scope.accuracy = position.coords.accuracy;
+  		    $scope.$apply();
+
+  				var latlng = new google.maps.LatLng($scope.latitude,$scope.longitude);
+  		    var httpz = "https://maps.googleapis.com/maps/api/geocode/json?latlng="+$scope.latitude+","+$scope.longitude+"&key=AIzaSyDwb8lxMiMVIVM4ZQ98RssfumMr8Olepzw";
+  		    $http.get(httpz).success(function(data){
+  		   	    $scope.full_address = data.results[0].formatted_address;
+          });
+          var log = 0;
+          Search.remove();
+  		    Search.addLoc($scope.latitude,$scope.longitude);
+  		    Search.setType("0");
+  				angular.forEach(areaJson.outlet, function(value,key){
+  						var pathArray = google.maps.geometry.encoding.decodePath(value.area);
+  						var pathPoly = new google.maps.Polygon({
+  							path: pathArray
+  						});
+  						if(google.maps.geometry.poly.containsLocation(new google.maps.LatLng($scope.latitude,$scope.longitude),pathPoly)) {
+  						    log++;
+  						    Search.addOutlet(value.id);
+  						}
+  				});
+  				$scope.areaCoverage = log;
+  				$scope.hide();
+  			});
+  		}
+  		else {
+  			$scope.hide();
+  		}
+  };
+
+
+  $scope.toSearch = function(){
+    $scope.show();
+    $scope.latitude = $scope.defaultAddress.latitude;
+    $scope.longitude = $scope.defaultAddress.longitude;
+    var areaJson = Search.getArea();
+    angular.forEach(areaJson.outlet, function(value,key){
+        var pathArray = google.maps.geometry.encoding.decodePath(value.area);
+        var pathPoly = new google.maps.Polygon({
+            path: pathArray
+        });
+        if(google.maps.geometry.poly.containsLocation(new google.maps.LatLng($scope.latitude,$scope.longitude),pathPoly)) {
+              Search.addOutlet(value.id);
+        }
+    });
+    Search.setType($scope.defaultAddress.address_id);
+    $scope.hide();
+    $location.path("/search");
+  };
+
+  $ionicModal.fromTemplateUrl('chooseAddress-modal.html', {
+      id: '2',
     	scope: $scope,
     	animation: 'slide-in-up'
 	}).then(function(modal) {
-	    $scope.modal = modal;
+	    $scope.modal2 = modal;
 	});
 
-	$scope.openModal = function() {
-	    $scope.modal.show();
+  $ionicModal.fromTemplateUrl('pickup-modal.html', {
+      id: '1',
+    	scope: $scope,
+    	animation: 'slide-in-up'
+	}).then(function(modal) {
+	    $scope.modal1 = modal;
+	});
+
+	$scope.openModal = function(index) {
+    if(index == 1)
+	    $scope.modal1.show();
+    else
+      $scope.modal2.show();
 	};
-	$scope.closeModal = function() {
-	    $scope.modal.hide();
+	$scope.closeModal = function(index) {
+    if(index == 1)
+      $scope.modal1.hide();
+    else
+      $scope.modal2.hide();
 	};
-	$scope.applyModal = function() {
-		var selected = $scope.data.selected;
-		$scope.defaultAddress = Customer.getAddressById(selected);
-		$scope.modal.hide();
+  $scope.applyPickup = function(){
+    Search.setOutlet($scope.data.selected);
+    $scope.modal1.hide();
+    $location.path("/restaurant/");
+  };
+	$scope.applyDelivery = function() {
+    $scope.modal2.hide();
 	};
 	$scope.$on('$destroy', function() {
-	    $scope.modal.remove();
+	    $scope.modal1.remove();
+      $scope.modal2.remove();
 	});
 
-	$scope.toSearch = function(){
-		$scope.show();
-		$scope.latitude = $scope.defaultAddress.latitude;
-		$scope.longitude = $scope.defaultAddress.longitude;
-		var areaJson = Search.getArea();
-		angular.forEach(areaJson.outlet, function(value,key){
-				var pathArray = google.maps.geometry.encoding.decodePath(value.area);
-				var pathPoly = new google.maps.Polygon({
-						path: pathArray
-				});
-				if(google.maps.geometry.poly.containsLocation(new google.maps.LatLng($scope.latitude,$scope.longitude),pathPoly)) {
-					    Search.addOutlet(value.id);
-				}
-		});
-		Search.setType($scope.defaultAddress.address_id);
-		$scope.hide();
-		$location.path("/search");
-	};
+
 });
 
-app.controller('restoCtrl',function($scope,$stateParams,$http,Customer){
-	$scope.outlet_id = $stateParams.outlet_id;
-	$scope.brand_id = $stateParams.brand_id;
+app.controller('restoCtrl',function($scope,$http,Search,Customer){
 	$scope.logged_in = Customer.isLogged();
 	$scope.$on('state.update', function () {
     	$scope.logged_in = false;
-    });
+  });
+  $scope.outlet_id = Search.getOutlet();
+  $scope.brand_id = 0;
 	var urlLogin = url + "/outletInfo.php?outlet_id="+$scope.outlet_id+"&callback=JSON_CALLBACK";
 	$http.jsonp(urlLogin).success(function(data) {
 		$scope.outletInfo = data.outlet;
+    $scope.brand_id = $scope.outletInfo.brand_id;
 		urlLogin = url + "/outletMenuCategory.php?brand_id="+$scope.outletInfo.brand_id+"&callback=JSON_CALLBACK";
 		$http.jsonp(urlLogin).success(function(data){
 				$scope.menuCategories = data.category;
 		});
-
-    });
+  });
 }).directive('restaurant',function() {
 	return {
 		restrict : 'E',
@@ -510,23 +579,23 @@ app.controller('orderCtrl',function($scope,$stateParams,$ionicModal,$http,Cart,$
   	};
 
   	$scope.addToCart = function (inputs) {
-		delete inputs['size'];
-		delete inputs['menu_description'];
-		var temp = [];
-		angular.forEach(inputs.attr,function(value,key){
-			if(value.selected == true) {
-				temp.push(value);
-			}
-		});
-		if(temp.length == 0)
-			delete inputs['attr'];
-		else
-			inputs.attr = temp;
-		Cart.addItem(inputs);
-	    $scope.modal.hide();
-	    $scope.items = Cart.getTotalItems();
-		$scope.prices = Cart.getTotalPrice();
-	};
+  		delete inputs['size'];
+  		delete inputs['menu_description'];
+  		var temp = [];
+  		angular.forEach(inputs.attr,function(value,key){
+  			if(value.selected == true) {
+  				temp.push(value);
+  			}
+  		});
+  		if(temp.length == 0)
+  			delete inputs['attr'];
+  		else
+  			inputs.attr = temp;
+  		Cart.addItem(inputs);
+  	  $scope.modal.hide();
+  	  $scope.items = Cart.getTotalItems();
+  	  $scope.prices = Cart.getTotalPrice();
+	  };
 
 	$ionicModal.fromTemplateUrl('myModalContent.html', {
 	  	scope: $scope,
@@ -552,9 +621,9 @@ app.controller('orderCtrl',function($scope,$stateParams,$ionicModal,$http,Cart,$
 	    $scope.total = $scope.menu.qty * (price_ea + price_attr);
 	},true);
 
-  	Cart.init($scope.outlet_id);
-  	$scope.items = Cart.getTotalItems();
-  	$scope.prices = Cart.getTotalPrice();
+  Cart.init();
+  $scope.items = Cart.getTotalItems();
+  $scope.prices = Cart.getTotalPrice();
 
 	$scope.goToCart = function() {
 		$location.path("/cart/"+$scope.outlet_id+"/"+$scope.brand_id);
@@ -789,26 +858,31 @@ app.controller('locationCtrl',function($scope,$http,$ionicLoading,Search,$locati
 	});
 });
 
-app.controller('cartCtrl',function($scope,$http,$stateParams,$ionicModal,$ionicLoading,Cart,Customer,$location,$ionicPopup) {
+app.controller('cartCtrl',function($scope,$http,$stateParams,$ionicModal,$ionicLoading,Cart,Customer,$location,$ionicPopup,Search) {
 	$scope.outlet_id = $stateParams.outlet_id;
 	$scope.brand_id = $stateParams.brand_id;
-	Cart.init($scope.outlet_id);
+  $scope.serviceType = Search.getType();
 	$scope.data = {};
 	$scope.data.datetimetype = 1;
 	$scope.data.datetime = new Date();
-    var momentz = moment($scope.data.datetime);
-    Cart.updateTime($scope.data.datetimetype,momentz.unix());
+  var momentz = moment($scope.data.datetime);
+  Cart.updateTime($scope.data.datetimetype,momentz.unix());
 	$scope.min_hit = false;
 
 	$scope.logged_in = Customer.isLogged();
 	$scope.$on('state.update', function () {
     	$scope.logged_in = false;
-    });
+  });
+
+  if($scope.serviceType == 1) {
+    $scope.data.selected = Search.getOutlet();
+    $scope.areaJson = Search.getArea();
+  }
 
 	$scope.items = Cart.getAll();
 	var totalItems = Cart.getTotalItems();
 	if(totalItems == 0)
-		$location.path("/order/"+$scope.outlet_id+"/"+$scope.brand_id+"/");
+	   $location.path("/order/"+$scope.outlet_id+"/"+$scope.brand_id+"/");
 
 	var totalPrice = 0;
 	angular.forEach($scope.items,function(value,key){
@@ -827,21 +901,23 @@ app.controller('cartCtrl',function($scope,$http,$stateParams,$ionicModal,$ionicL
 	$scope.totalPrice = totalPrice;
 	$scope.totalItems = totalItems;
 
-	var urlz = url + "/getFees.php?outlet_id="+$scope.outlet_id+"&brand_id="+$scope.brand_id+"&callback=JSON_CALLBACK";
+  var urlz = url + "/getFees.php?outlet_id="+$scope.outlet_id+"&brand_id="+$scope.brand_id+"&callback=JSON_CALLBACK";
 	$http.jsonp(urlz).success(function(data){
-		$scope.tax_service_charge = data.charge.tax_service_charge;
-		$scope.delivery_fee = data.charge.delivery_fee;
-		$scope.min_transaction = data.charge.min_transaction;
-		Cart.updatePrice($scope.tax_service_charge,$scope.delivery_fee);
-		$scope.grandtotal = ($scope.totalPrice*$scope.tax_service_charge/100) + $scope.totalPrice + $scope.delivery_fee;
-		if($scope.totalPrice > $scope.min_transaction)
-			$scope.min_hit = true;
-	});
+  		$scope.tax_service_charge = data.charge.tax_service_charge;
+  		$scope.delivery_fee = data.charge.delivery_fee;
+  		$scope.min_transaction = data.charge.min_transaction;
+      if($scope.serviceType == 1) {
+        $scope.delivery_fee = 0;
+    		$scope.min_transaction = 0;
+        $scope.min_hit = true;
+      }
+  		Cart.updatePrice($scope.tax_service_charge,$scope.delivery_fee);
+  		$scope.grandtotal = ($scope.totalPrice*$scope.tax_service_charge/100) + $scope.totalPrice + $scope.delivery_fee;
+  		if($scope.totalPrice > $scope.min_transaction)
+  			$scope.min_hit = true;
+  });
 
 
-	$scope.editItem = function(index) {
-
-	};
 
 	$scope.deleteItem = function(index) {
 		Cart.removeItem(index);
@@ -880,35 +956,36 @@ app.controller('cartCtrl',function($scope,$http,$stateParams,$ionicModal,$ionicL
 	});
 
 	$scope.openModal = function (index, itemId){
-		if(index == 1) $scope.modal1.show();
-      	else{
-      		$scope.item = Cart.getItem(itemId);
-      		$scope.menu_id = $scope.item.menu_id;
-      		$scope.indexItem = itemId;
-			$scope.menu = {};
-			var urlLogin = url + "/menuInformation.php?menu_id="+$scope.menu_id+"&callback=JSON_CALLBACK";
-			$http.jsonp(urlLogin).success(function(data){
-				$scope.menu = data.menu;
-				$scope.menu.qty = $scope.item.qty;
-				$scope.menu.instructions = $scope.item.instructions;
-				var idx = 0;
-				angular.forEach($scope.menu.attr,function(value,key){
-					angular.forEach($scope.item.attr,function(value1,key1){
-						if(value.attribute_id == value1.attribute_id){
-							$scope.menu.attr[idx].selected = $scope.item.attr[idx].selected;
-						}
-					});
-					idx = idx + 1;
-				});
-				if(data.menu.size.length>0) {
-					$scope.menu.size_id = $scope.menu.size[0];
-				}
-			});
-			$scope.modal2.show();
-      	}
-  	};
+		if(index == 1)
+      $scope.modal1.show();
+    else{
+      	$scope.item = Cart.getItem(itemId);
+      	$scope.menu_id = $scope.item.menu_id;
+      	$scope.indexItem = itemId;
+  			$scope.menu = {};
+  			var urlLogin = url + "/menuInformation.php?menu_id="+$scope.menu_id+"&callback=JSON_CALLBACK";
+  			$http.jsonp(urlLogin).success(function(data){
+    				$scope.menu = data.menu;
+    				$scope.menu.qty = $scope.item.qty;
+    				$scope.menu.instructions = $scope.item.instructions;
+    				var idx = 0;
+    				angular.forEach($scope.menu.attr,function(value,key){
+    					angular.forEach($scope.item.attr,function(value1,key1){
+    						if(value.attribute_id == value1.attribute_id){
+    							$scope.menu.attr[idx].selected = $scope.item.attr[idx].selected;
+    						}
+    					});
+    					idx = idx + 1;
+    				});
+    				if(data.menu.size.length>0) {
+    					$scope.menu.size_id = $scope.menu.size[0];
+    				}
+  			});
+  			$scope.modal2.show();
+  	}
+  };
 
-  	$scope.updateToCart = function (inputs, index) {
+  $scope.updateToCart = function (inputs, index) {
 		delete inputs['size'];
 		delete inputs['menu_description'];
 		var temp = [];
@@ -927,7 +1004,7 @@ app.controller('cartCtrl',function($scope,$http,$stateParams,$ionicModal,$ionicL
 		$scope.deleteItem(index);
 	};
 
-  	$scope.closeModal = function(index) {
+  $scope.closeModal = function(index) {
   		if(index == 1) {
   			$scope.data.datetimetype = 1;
 			$scope.data.datetime = new Date();
@@ -937,60 +1014,61 @@ app.controller('cartCtrl',function($scope,$http,$stateParams,$ionicModal,$ionicL
   		}else{
   			$scope.modal2.hide();
   		}
-  	};
+  };
+
 	$scope.saveModal = function(index) {
 		if(index == 1) {
 			$scope.data.datetimetype = 2;
-	    	$scope.modal.hide();
-	    	var momentz = moment($scope.data.datetime);
-	    	Cart.updateTime($scope.data.datetimetype,momentz.unix());
-	    }else{
+	    $scope.modal1.hide();
+	    var momentz = moment($scope.data.datetime);
+	    Cart.updateTime($scope.data.datetimetype,momentz.unix());
+	  } else {
 
-	    }
-  	};
-  	$scope.showAlert = function() {
+	  }
+  };
+
+  $scope.showAlert = function() {
 	   var alertPopup = $ionicPopup.alert({
 	     title: 'Mininum Order',
 	     template: 'Minimum Order untuk Delivery tidak Tercapai'
 	   });
 	};
-  	$scope.toCheckout = function() {
+
+  $scope.toCheckout = function() {
   		if(Customer.isLogged()) {
   			$location.path('/checkout/'+$scope.outlet_id+'/'+$scope.brand_id);
   		}
   		else {
   			$location.path('/login-mid/'+$scope.outlet_id+'/'+$scope.brand_id);
   		}
-  	};
+  };
 });
 
 app.controller('checkoutCtrl',function($scope,$http,$stateParams,$ionicPopup,$ionicLoading,Cart,Search,$location,Customer) {
 	$scope.outlet_id = $stateParams.outlet_id;
 	$scope.brand_id = $stateParams.brand_id;
+  $scope.serviceType = Search.getType();
 	$scope.logged_in = Customer.isLogged();
 	$scope.addressInput = {};
 	$scope.deliveryInstruction = {};
 	$scope.$on('state.update', function () {
     	$scope.logged_in = false;
     	$location.path('/login-mid/'+$scope.outlet_id+'/'+$scope.brand_id);
-    });
-    if($scope.logged_in == false) {
+  });
+  if($scope.logged_in == false) {
     	$location.path('/login-mid/'+$scope.outlet_id+'/'+$scope.brand_id);
-    }
-	Cart.init($scope.outlet_id);
+  }
 	$scope.items = Cart.getAll();
 	$scope.totalPrice = parseInt(Cart.getTotalPrice());
 	$scope.totalItems = Cart.getTotalItems();
 	$scope.tax_service_charge = Cart.getTaxCharge()/100 * $scope.totalPrice;
-	$scope.delivery_fee = parseInt(Cart.getDeliveryFee());
-	$scope.searchType = Search.getType();
-	if($scope.searchType > 0) {
-		$scope.addr = Customer.getAddressById($scope.searchType);
-	}
-	else {
-		$scope.addressInput.address_selection = 1;
-	}
 
+  if($scope.serviceType == 1) {
+    $scope.pickupLocation = Search.getOutletDetails();
+    $scope.order_type = Cart.getDeliveryType();
+		$scope.order_datetime = Cart.getDeliveryTime();
+
+  }
 	$scope.saveAddress = function(address) {
 		$scope.addressInput.latitude = Search.getLat();
 		$scope.addressInput.longitude = Search.getLng();

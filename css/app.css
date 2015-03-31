@@ -552,7 +552,7 @@ legend {
 .line_legend, .line_legend_black {
     text-align: center;
     display: table;
-    width: 90%;
+    width: 200px;
 }
 
 .line_legend > span, .line_legend:before, .line_legend:after, .line_legend_black > span, .line_legend_black:before, .line_legend_black:after {
@@ -585,4 +585,8 @@ legend {
 	background-color:#eee;
 	background-image: url(img/left_panel_bg.jpg) !important;
 	background-repeat: repeat-y !important;
+}
+
+.t {
+  font-size:5px !important;
 }

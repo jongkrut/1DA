@@ -20,8 +20,25 @@
 		<img src="img/fatlogo.png" style="width:200px;"/>
 	</div>
 
+	<div ng-click="showSheet()" class="find_loc">
+		<div style="width:200px;">
+				<img alt="FatBurger" src="img/yer.png" id="FatBurger" style="width:100%;height:200px"/>
+		</div>
+	</div>
 
-	<div ng-show="logged_in" ng-hide="newAddress">
+	<div class="find_loc" ng-hide="logged_in" style="margin-top:30px">
+		<a class="button button_dark_on_yellow" ui-sref="login" style="border-radius:5px;width:200px">Login</a>
+	</div>
+
+	<div class="find_loc" ng-hide="logged_in" style="margin-top:5px">
+		<span class="font-white font_oswald_normal_300 line_legend">&nbsp;or&nbsp;</span>
+	</div>
+
+	<div class="find_loc" ng-hide="logged_in" style="margin-top:5px">
+		<a class="button button_yellow_on_dark" ui-sref="login" style="border-radius:5px;width:200px">Sign Up</a>
+	</div>
+
+	<div ng-show="logged_in">
 		<div align="center" style="margin:10px;">
 			<fieldset>
 				<legend align="center" class="font_oswald_normal_300" style="font-size:18px;"> WELCOME BACK </legend>
@@ -34,44 +51,6 @@
 				<font style="color:white;" > <button ng-click="openModal()" class="button-clear" ng-hide="defaultAddress==''"> Tap here to change location. </button> </font>
 			</fieldset>
 		</div>
-
-		<div class="find_loc">
-			<a class="button button_dark_on_yellow" ng-click="toSearch()" ng-hide="defaultAddress==''">
-				<i class="icon ion-search"></i> Find Nearby Store
-			</a>
-		</div>
-
-		<div class="find_loc">
-			<span ng-hide="defaultAddress==''" class="font-white font_oswald_normal_300 line_legend">&nbsp;OR&nbsp;
-			</span><br/>
-			<span ng-hide="defaultAddress==''" class="font-white font_oswald_normal_300"> ORDER FOR DIFFERENT ADDRESS
-			</span><br/>
-			<button class="button button_yellow_on_dark" ng-click="newAddress=true">
-				<i class="icon ion-location"></i> Create New Address
-			</button>
-		</div>
-	</div>
-
-	<div class="find_loc" ng-show="newAddress">
-		<span class="font-white font_oswald_normal_300">
-			<br/>
-			TAP THE BURGER <br/>TO FIND OUR NEARBY STORE
-		</span>
-	</div>
-
-	<div ng-click="toMap()" class="find_loc" ng-show="newAddress">
-				<img alt="FatBurger" src="img/burgerlogo.png" id="FatBurger" style="height:200px;width:auto;"/>
-	</div>
-
-	<div class="find_loc" ng-show="newAddress">
-		<span class="font-white font_oswald_normal_300 line_legend">&nbsp;OR&nbsp;</span>
-	</div>
-
-	<div class="find_loc" ng-show="newAddress">
-		<span class="font-white font_oswald_normal_300" style="width:100% !important">WRITE DOWN YOUR SPECIFIC ADDRESS</span>
-	</div>
-	<div class="find_loc" ng-show="newAddress">
-		<a class="button button_yellow_on_dark" ui-sref="location-search" style="margin-top:15px;width:170px"><i class="icon ion-edit"></i>  Enter Address </a>
 	</div>
 
 </ion-content>
@@ -133,12 +112,48 @@
 						</p>
 					</addrType>
 			</ion-radio>
-       	</div>
+			<ion-radio ng-model="data.selected" ng-value="0">
+				<div class="item">Create New</div>
+			</ion-radio>
+      </div>
+			<nav ng-show="data.selected==0">
+				<label class="item item-radio">
+					<input type="radio" name="group">
+					<div class="item">Current Location</div>
+					<i class="radio-icon ion-checkmark"></i>
+				</label>
+				<label class="item item-radio">
+					<input type="radio" name="group">
+					<div class="item">Input Address</div>
+					<i class="radio-icon ion-checkmark"></i>
+				</label>
+			</nav>
     </ion-content>
     <ion-footer-bar>
     	<div class="button-bar">
     		<button class="button button-calm button_dark_on_yellow" style="border: 1px solid #3d3d3d !important;" ng-click="closeModal()">Cancel</button>
-    		<button class="button button-balanced button_dark_on_yellow" style="border: 1px solid #3d3d3d !important;" ng-click="applyModal()">OK</button>
+    		<button class="button button-balanced button_dark_on_yellow" style="border: 1px solid #3d3d3d !important;" ng-click="applyDelivery()">OK</button>
+    	</div>
+    </ion-footer-bar>
+  </ion-modal-view>
+</script>
+
+<script id="pickup-modal.html" type="text/ng-template">
+  <ion-modal-view>
+    <ion-header-bar>
+      <h1 class="title">Store Location:</h1>
+    </ion-header-bar>
+    <ion-content>
+			<div class="list">
+				<ion-radio name="loc" ng-repeat="area in areaJson.outlet" ng-model="data.selected" ng-value="{{area.id}}">
+					<div class="item">{{area.name}}</div>
+				</ion-radio>
+			</div>
+    </ion-content>
+    <ion-footer-bar>
+    	<div class="button-bar">
+    		<button class="button button-calm button_dark_on_yellow" style="border: 1px solid #3d3d3d !important;" ng-click="closeModal()">Cancel</button>
+    		<button class="button button-balanced button_dark_on_yellow" style="border: 1px solid #3d3d3d !important;" ng-click="applyPickup()">OK</button>
     	</div>
     </ion-footer-bar>
   </ion-modal-view>

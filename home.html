@@ -42,13 +42,7 @@
 		<div align="center" style="margin:10px;">
 			<fieldset>
 				<legend align="center" class="font_oswald_normal_300" style="font-size:18px;"> WELCOME BACK </legend>
-				<font style="color:#ffd909; font-weight:bold; font-size:24px;" class="font_oswald_normal_300"> {{customer.customer_name}} </font><br/>
-				<div ng-hide="defaultAddress==''">
-					<font style="color:white;">
-						You are using<button ng-click="openModal()" class="button-clear" style="color:#ffd909;font-weight:bold;text-decoration:underline;">{{defaultAddress.address_name}}</button>as your current search location. <br/>
-					</font>
-				</div>
-				<font style="color:white;" > <button ng-click="openModal()" class="button-clear" ng-hide="defaultAddress==''"> Tap here to change location. </button> </font>
+				<font style="color:#ffd909; font-weight:bold; font-size:24px;" class="font_oswald_normal_300"> {{customer.customer_name}} </font><br/><br/>
 			</fieldset>
 		</div>
 	</div>
@@ -63,7 +57,7 @@
       <h1 class="title">Choose Your Address</h1>
     </ion-header-bar>
     <ion-content>
-    	<div class="list padding">
+    	<div class="list">
 			<ion-radio ng-repeat="item in addresses"
                    ng-value="item.address_id"
                    ng-model="data.selected"
@@ -113,21 +107,26 @@
 					</addrType>
 			</ion-radio>
 			<ion-radio ng-model="data.selected" ng-value="0">
-				<div class="item">Create New</div>
+				Create New
+			</ion-radio>
+			</div>
+				<div class="list padding" ng-show="data.selected==0">
+
+					<label class="item item-radio">
+						<input type="radio" name="new_type" ng-model="data.new_type" ng-value="0">
+						<div class="item">Current Location</div>
+						<i class="radio-icon ion-checkmark"></i>
+					</label>
+					<label class="item item-radio">
+						<input type="radio" name="new_type" ng-model="data.new_type" ng-value="1">
+						<div class="item">Input Address</div>
+						<i class="radio-icon ion-checkmark"></i>
+					</label>
+						{{data | json}}
+				</div>
 			</ion-radio>
       </div>
-			<nav ng-show="data.selected==0">
-				<label class="item item-radio">
-					<input type="radio" name="group">
-					<div class="item">Current Location</div>
-					<i class="radio-icon ion-checkmark"></i>
-				</label>
-				<label class="item item-radio">
-					<input type="radio" name="group">
-					<div class="item">Input Address</div>
-					<i class="radio-icon ion-checkmark"></i>
-				</label>
-			</nav>
+
     </ion-content>
     <ion-footer-bar>
     	<div class="button-bar">
@@ -146,7 +145,7 @@
     <ion-content>
 			<div class="list">
 				<ion-radio name="loc" ng-repeat="area in areaJson.outlet" ng-model="data.selected" ng-value="{{area.id}}">
-					<div class="item">{{area.name}}</div>
+					{{area.name}}
 				</ion-radio>
 			</div>
     </ion-content>

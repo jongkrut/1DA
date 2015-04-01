@@ -11,13 +11,6 @@ var app = angular.module('indexApp', [
 
 app.config(['$httpProvider', function($httpProvider) {
           $httpProvider.defaults.useXDomain = true;
-
-          /**
-           * Just setting useXDomain to true is not enough. AJAX request are also
-           * send with the X-Requested-With header, which indicate them as being
-           * AJAX. Removing the header is necessary, so the server is not
-           * rejecting the incoming request.
-           **/
           delete $httpProvider.defaults.headers.common['X-Requested-With'];
       }
 ]);
@@ -324,6 +317,7 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
 	$scope.logged_in = Customer.isLogged();
   $scope.areaJson = Search.getArea();
 	$scope.data  = {};
+  Search.init();
 
 	$scope.$on('state.update', function () {
     	$scope.logged_in = false;
@@ -331,7 +325,6 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
   });
 	if($scope.logged_in == true){
 		$scope.customer = Customer.getCustomer();
-		Search.init();
 	}
 
 	$scope.show = function() {
@@ -363,6 +356,7 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
         else {
           Search.setType(2);
           $scope.data.selected = Customer.getDefaultAddress();
+          $scope.data.new_type = 0;
           $scope.openModal(2);
         }
         return true;
@@ -408,26 +402,6 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
   		}
   };
 
-
-  $scope.toSearch = function(){
-    $scope.show();
-    $scope.latitude = $scope.defaultAddress.latitude;
-    $scope.longitude = $scope.defaultAddress.longitude;
-    var areaJson = Search.getArea();
-    angular.forEach(areaJson.outlet, function(value,key){
-        var pathArray = google.maps.geometry.encoding.decodePath(value.area);
-        var pathPoly = new google.maps.Polygon({
-            path: pathArray
-        });
-        if(google.maps.geometry.poly.containsLocation(new google.maps.LatLng($scope.latitude,$scope.longitude),pathPoly)) {
-              Search.addOutlet(value.id);
-        }
-    });
-    Search.setType($scope.defaultAddress.address_id);
-    $scope.hide();
-    $location.path("/search");
-  };
-
   $ionicModal.fromTemplateUrl('chooseAddress-modal.html', {
       id: '2',
     	scope: $scope,
@@ -462,6 +436,57 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
     $location.path("/restaurant/");
   };
 	$scope.applyDelivery = function() {
+    if($scope.data.selected > 0) {
+      var addr = Customer.getAddressByIndex($scope.data.selected);
+      $scope.latitude = addr.latitude;
+      $scope.longitude = addr.longitude;
+      var areaJson = Search.getArea();
+      angular.forEach(areaJson.outlet, function(value,key){
+          var pathArray = google.maps.geometry.encoding.decodePath(value.area);
+          var pathPoly = new google.maps.Polygon({
+              path: pathArray
+          });
+          if(google.maps.geometry.poly.containsLocation(new google.maps.LatLng($scope.latitude,$scope.longitude),pathPoly)) {
+                Search.setOutlet(value.id);
+          }
+      });
+    } else {
+      if($scope.data.new_type == 0) {
+        $scope.show();
+        var areaJson = Search.getArea();
+        if(navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+              $scope.latitude = position.coords.latitude;
+              $scope.longitude = position.coords.longitude;
+              $scope.accuracy = position.coords.accuracy;
+              $scope.$apply();
+
+              var latlng = new google.maps.LatLng($scope.latitude,$scope.longitude);
+              var httpz = "https://maps.googleapis.com/maps/api/geocode/json?latlng="+$scope.latitude+","+$scope.longitude+"&key=AIzaSyDwb8lxMiMVIVM4ZQ98RssfumMr8Olepzw";
+              $http.get(httpz).success(function(data){
+                   $scope.full_address = data.results[0].formatted_address;
+              });
+
+              Search.addLoc($scope.latitude,$scope.longitude);
+              angular.forEach(areaJson.outlet, function(value,key){
+                  var pathArray = google.maps.geometry.encoding.decodePath(value.area);
+                  var pathPoly = new google.maps.Polygon({
+                      path: pathArray
+                  });
+                  if(google.maps.geometry.poly.containsLocation(new google.maps.LatLng($scope.latitude,$scope.longitude),pathPoly)) {
+                      Search.setOutlet(value.id);
+                      Search.setDeliveryType(0);
+                      $scope.hide();
+                      $location.path("/restaurant/");
+                  }
+              });
+            });
+          }
+      } else {
+          Search.setDeliveryType(1);
+          console.log("DELIVERY USE INPUT" + $scope.data.new_type);
+      }
+    }
     $scope.modal2.hide();
 	};
 	$scope.$on('$destroy', function() {

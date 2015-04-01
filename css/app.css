@@ -285,7 +285,7 @@
 }
 
 #panelList {
-	padding:5px 10px;
+	padding:5px 7px;
 	padding-top:0;
 	margin-top:-18px;
 }
@@ -293,11 +293,12 @@
 	/*background-color:#585858;*/
 	color:#fff;
 	border:0;
-	border-bottom:1px solid #3d3d3d;
+	border-bottom:1px solid #555;
 	margin-top:2px;
 	font-weight:bold;
 	box-shadow:0px 1px 0px #777;
-	cursor:pointer;
+  cursor:pointer;
+  background-color:transparent;
 }
 #panelList a:hover {
 	background-color: #292929;
@@ -309,7 +310,7 @@
 }
 #panelList2 a {
 	border:none;
-	/*background-color:#585858;*/
+  background-color:transparent;
 	color:#bebebe;
 	font-size:14px;
 }

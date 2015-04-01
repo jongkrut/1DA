@@ -86,6 +86,8 @@ angular.module('search',[]).factory('Search',function(){
 			localStorage.setItem("search",JSON.stringify([]));
 			localStorage.setItem("latitude","");
 			localStorage.setItem("longitude","");
+			localStorage.removeItem("service-type");
+			localStorage.removeItem("delivery-type");
 		},
 		setArea: function(area) {
 			localStorage.setItem("area",JSON.stringify(area));
@@ -96,9 +98,6 @@ angular.module('search',[]).factory('Search',function(){
 		getAll: function(){
 			return localStorage.getItem("search");
 		},
-		addOutlet: function(outlet) {
-			localStorage.setItem("search",outlet);
-		},
 		remove: function(){
 			localStorage.setItem("search",JSON.stringify([]));
 			localStorage.setItem("latitude","");
@@ -107,6 +106,9 @@ angular.module('search',[]).factory('Search',function(){
 		},
 		setType : function(type) {
 			localStorage.setItem("service-type",type);
+		},
+		setDeliveryType : function(type) {
+			localStorage.setItem("delivery-type",type);
 		},
 		setOutlet : function(id) {
 			localStorage.setItem("outlet",id);
@@ -123,6 +125,9 @@ angular.module('search',[]).factory('Search',function(){
 		},
 		getType : function(){
 			return localStorage.getItem("service-type");
+		},
+		getDeliveryType : function(){
+			return localStorage.getItem("delivery-type");
 		},
 		getOutlet : function(){
 			return localStorage.getItem("outlet");
@@ -204,7 +209,7 @@ angular.module('customer',[]).factory('Customer',function($rootScope,$http){
 				var addr = 0;
 				for(var i = 0; i < address.length;i++){
 					if(address[i].default_address == 1) {
-						addr = address[i];
+						addr = i;
 						break;
 					}
 				}

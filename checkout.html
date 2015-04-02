@@ -89,7 +89,8 @@
 	<div class="col table_border_progress"></div>
 	<div class="col table_header"> Your Delivery Address </div>
 </div>
-<div class="row" ng-hide="searchType != 0">
+
+<div class="row" ng-hide="deliveryAddress != 0">
 	<div class="col table_border_progress"></div>
 	<div class="col table_header bg_odd font-black">
 	<div style="text-align: center;">
@@ -101,8 +102,8 @@
 </div>
 <div class="row">
 	<div class="col table_border_progress"></div>
-	<div class="col table_col">
-		<div ng-hide="searchType == 0">
+	<div class="col table_col" style="background-color:transparent">
+		<div ng-show="deliveryAddress != 0">
 			<div class="card" ng-switch on="addr.address_type">
 				<addrType ng-switch-when="1">
 					<div class="item item-divider">
@@ -167,7 +168,7 @@
 			</div>
 		</div>
 
-		<div ng-show="searchType == 0">
+		<div ng-show="deliveryAddress == 0">
 			<div class="list list-inset" ng-switch on="addr.address_type">
 				<label class="item item-input item-select">
 				    <div class="input-label">

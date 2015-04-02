@@ -13,7 +13,7 @@
                 <h3 class="padding font-white" style="text-align:left !important;margin-top:-10px;">{{menu.menu_name}}</h3>
         	    <div class="padding font-white" style="margin-top:-20px;">{{ menu.menu_description}}</div>
                 <hr style="margin:0 10px 0 10px;">
-                <div class="item item-input padding" style="width:100%">
+                <div class="item item-input padding" style="width:100%;background-color:transparent;border:0">
                     <span class="input-label font-white">Quantity : </span>
                     <input type="text" size=5 name="input" ng-model="menu.qty" placeholder="Qty" ng-init="menu.qty=1" style="background-color:white !important; margin:0 10px 0 0 !important;text-align: center;padding-right: 0px !important;"/>
                     <span class="input-label font-white">item(s)</span>
@@ -42,11 +42,11 @@
             </div>
         	<hr ng-show="menu.attr.length>0" style="margin:0 10px 0 10px;">
 
-            <div class="list">
-                <label class="item item-input font-white">
+            <div class="list" style="width:100%;background-color:transparent;border:none">
+                <label class="item item-input font-white" style="background-color:transparent;border:0">
                     Special Instructions
                 </label>
-                <label class="item item-input padding">
+                <label class="item item-input padding" style="background-color:transparent;border:0">
                    <textarea ng-model="menu.instructions" placeholder="Special Instructions" style="padding: 10px 10px 10px 10px;"></textarea>
                 </label>
             </div>

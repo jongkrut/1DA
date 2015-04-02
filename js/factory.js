@@ -88,6 +88,7 @@ angular.module('search',[]).factory('Search',function(){
 			localStorage.setItem("longitude","");
 			localStorage.removeItem("service-type");
 			localStorage.removeItem("delivery-type");
+			localStorage.removeItem("delivery_address");
 		},
 		setArea: function(area) {
 			localStorage.setItem("area",JSON.stringify(area));
@@ -103,6 +104,8 @@ angular.module('search',[]).factory('Search',function(){
 			localStorage.setItem("latitude","");
 			localStorage.setItem("longitude","");
 			localStorage.removeItem("service-type");
+			localStorage.removeItem("delivery-type");
+			localStorage.removeItem("delivery_address");
 		},
 		setType : function(type) {
 			localStorage.setItem("service-type",type);
@@ -141,6 +144,12 @@ angular.module('search',[]).factory('Search',function(){
 					break;
 				}
 			}
+		},
+		setDeliveryAddress : function(id) {
+			localStorage.setItem("delivery-address",id);
+		},
+		getDeliveryAddress : function() {
+			return localStorage.getItem("delivery-address");
 		}
 	}
 	return cart;

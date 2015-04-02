@@ -133,7 +133,6 @@ app.run(function($rootScope,$ionicNavBarDelegate,$ionicSideMenuDelegate,$ionicPo
        Customer.refreshAddress();
 		 }
      $http.get("http://128.199.235.202/area/fb.json",{cache:false}).success(function(data){
-        console.log(data.fatburger.outlet);
         Search.setArea(data.fatburger);
      });
   });
@@ -344,16 +343,18 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
 
        },
        buttonClicked: function(index) {
-        if(index==0) {
+        if(index==0) { //PICKUP
           Search.setType(1);
           $scope.data.selected = 46;
           $scope.openModal(1);
         }
-        else {
+        else { //DELIVERY
           Search.setType(2);
           $scope.data.selected = Customer.getDefaultAddress();
+          $scope.addresses = Customer.getAddress();
           $scope.data.new_type = 0;
           $scope.openModal(2);
+          console.log($scope.data.selected);
         }
         return true;
        }
@@ -396,9 +397,7 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
       $scope.modal2.show();
 	};
 	$scope.closeModal = function(index) {
-    if(index == 1)
       $scope.modal1.hide();
-    else
       $scope.modal2.hide();
 	};
   $scope.applyPickup = function(){
@@ -408,7 +407,9 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
   };
 	$scope.applyDelivery = function() {
     if($scope.data.selected > 0) {
+      $scope.show();
       var addr = Customer.getAddressByIndex($scope.data.selected);
+      Search.setDeliveryAddress(addr.address_id);
       $scope.latitude = addr.latitude;
       $scope.longitude = addr.longitude;
       var areaJson = Search.getArea();
@@ -419,9 +420,12 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
           });
           if(google.maps.geometry.poly.containsLocation(new google.maps.LatLng($scope.latitude,$scope.longitude),pathPoly)) {
                 Search.setOutlet(value.id);
+                $scope.hide();
+                $location.path("/restaurant/");
           }
       });
     } else {
+      Search.setDeliveryAddress($scope.data.selected);
       if($scope.data.new_type == 0) {
         $scope.show();
         var areaJson = Search.getArea();
@@ -437,7 +441,7 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
               $http.get(httpz).success(function(data){
                    $scope.full_address = data.results[0].formatted_address;
               });
-
+              var i = 0;
               Search.addLoc($scope.latitude,$scope.longitude);
               angular.forEach(areaJson.outlet, function(value,key){
                   var pathArray = google.maps.geometry.encoding.decodePath(value.area);
@@ -449,10 +453,13 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
                       Search.setDeliveryType(0);
                       $scope.hide();
                       $location.path("/restaurant/");
+                      i++;
                   }
               });
-              $scope.hide();
-              $scope.showAlert();
+              if(i == areaJson.outlet.length) {
+                $scope.hide();
+                $scope.showAlert();
+              }
             });
           }
       } else {
@@ -472,10 +479,13 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
 
 app.controller('restoCtrl',function($scope,$http,Search,Customer){
 	$scope.logged_in = Customer.isLogged();
+  $scope.serviceType = Search.getType();
+  $scope.outlet_id = Search.getOutlet();
+  $scope.details = Search.getOutletDetails()
 	$scope.$on('state.update', function () {
     	$scope.logged_in = false;
   });
-  $scope.outlet_id = Search.getOutlet();
+
   $scope.brand_id = 0;
 	var urlLogin = url + "/outletInfo.php?outlet_id="+$scope.outlet_id+"&callback=JSON_CALLBACK";
 	$http.jsonp(urlLogin).success(function(data) {
@@ -491,20 +501,6 @@ app.controller('restoCtrl',function($scope,$http,Search,Customer){
 		restrict : 'E',
 		templateUrl: 'restaurant-template.html'
 	};
-});
-
-app.controller('searchCtrl',function($scope,$stateParams,$http,$location,Search,Customer){
-	$scope.logged_in = Customer.isLogged();
-	$scope.$on('state.update', function () {
-    	$scope.logged_in = false;
-    });
-	var urlLogin = url + "/search.php?outlet_id="+Search.getAll().replace("[","").replace("]","")+"&callback=JSON_CALLBACK";
-	$http.jsonp(urlLogin).success(function(response) {
-			var data = response.outlet;
-      var outlet_id = data[0].outlet_id;
-      var brand_id = data[0].brand_id;
-      $location.path('/restaurant/'+outlet_id+'/'+brand_id);
-  });
 });
 
 app.controller('orderCtrl',function($scope,$stateParams,$ionicModal,$http,Cart,$ionicLoading,$location,Customer){
@@ -687,7 +683,8 @@ app.controller('locationCtrl',function($scope,$http,$ionicLoading,Search,$locati
 					path: pathArray
 				});
 				if(google.maps.geometry.poly.containsLocation(latlng,pathPoly)) {
-				    Search.addOutlet(value.id);
+				    Search.setOutlet(value.id);
+            $scope.areaCoverage = 1;
 				}
 		});
 		$scope.$apply();
@@ -700,7 +697,7 @@ app.controller('locationCtrl',function($scope,$http,$ionicLoading,Search,$locati
 		$scope.map.setCenter(latlng);
 		var httpz = "https://maps.googleapis.com/maps/api/geocode/json?latlng="+$scope.latitude+","+$scope.longitude+"&key=AIzaSyDwb8lxMiMVIVM4ZQ98RssfumMr8Olepzw";
 		$http.get(httpz).success(function(data){
-		   	$scope.full_address = data.results[0].formatted_address;
+		   	input.value = data.results[0].formatted_address;
 		});
 		Search.addLoc($scope.latitude,$scope.longitude);
 		angular.forEach(areaJson.outlet, function(value,key){
@@ -709,7 +706,8 @@ app.controller('locationCtrl',function($scope,$http,$ionicLoading,Search,$locati
 					path: pathArray
 				});
 				if(google.maps.geometry.poly.containsLocation(latlng,pathPoly)) {
-				    Search.addOutlet(value.id);
+				    Search.setOutlet(value.id);
+            $scope.areaCoverage = 1;
 				}
 		});
 	});
@@ -924,7 +922,14 @@ app.controller('checkoutCtrl',function($scope,$http,$stateParams,$ionicPopup,$io
     $scope.pickupLocation = Search.getOutletDetails();
     $scope.order_type = Cart.getDeliveryType();
 		$scope.order_datetime = Cart.getDeliveryTime();
-
+  } else {
+    $scope.deliveryType = Search.getDeliveryType();
+    $scope.deliveryAddress = Search.getDeliveryAddress();
+    console.log($scope.deliveryAddress);
+    if($scope.deliveryAddress!=0) {
+      $scope.addr = Customer.getAddressById($scope.deliveryAddress);
+      console.log($scope.addr);
+    }
   }
 	$scope.saveAddress = function(address) {
 		$scope.addressInput.latitude = Search.getLat();
@@ -940,9 +945,9 @@ app.controller('checkoutCtrl',function($scope,$http,$stateParams,$ionicPopup,$io
 		.then(function(response) {
 			if(response.data.address_id > 0) {
 				Customer.setAddress(response.data.address);
-				Search.setType(response.data.address_id);
-				$scope.searchType = response.data.address_id;
-				$scope.addr = Customer.getAddressById($scope.searchType);
+        Search.setDeliveryAddress(response.data.address_id);
+        $scope.deliveryAddress = Search.getDeliveryAddress();
+        $scope.addr = Customer.getAddressById($scope.deliveryAddress);
 			}
 		});
 

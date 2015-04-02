@@ -22,7 +22,7 @@
 
 	<div ng-click="showSheet()" class="find_loc">
 		<div style="width:200px;">
-				<img alt="FatBurger" src="img/yer.png" id="FatBurger" style="width:100%;height:200px"/>
+				<img alt="FatBurger" src="img/homego.png" id="FatBurger" style="width:100%;height:200px"/>
 		</div>
 	</div>
 
@@ -59,7 +59,7 @@
     <ion-content>
     	<div class="list">
 			<ion-radio ng-repeat="item in addresses"
-                   ng-value="item.address_id"
+                   ng-value="$index"
                    ng-model="data.selected"
                    name="server-side"
 				   ng-switch on="item.address_type">

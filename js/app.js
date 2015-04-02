@@ -43,12 +43,8 @@ app.config(['$stateProvider', function($stateProvider) {
 						url : '/new-address',
 						templateUrl : 'address-new.html',
 						controller : 'newAddressCtrl'
-	}).state('map-search', {
-						url : '/map-search',
-						templateUrl : 'map-search.html',
-						controller : 'mapsCtrl'
 	}).state('location-search', {
-						url : '/location-search',
+						url : '/location-search/',
 						templateUrl : 'map-search.html',
 						controller : 'locationCtrl'
 	}).state('search', {
@@ -313,7 +309,7 @@ app.controller('midLoginCtrl',function($scope,$stateParams,$http,$location,Custo
     };
 });
 
-app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSideMenuDelegate,$ionicLoading,$http,$ionicModal,Customer,Search,$window){
+app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSideMenuDelegate,$ionicPopup,$ionicLoading,$http,$ionicModal,Customer,Search,$window){
 	$scope.logged_in = Customer.isLogged();
   $scope.areaJson = Search.getArea();
 	$scope.data  = {};
@@ -364,42 +360,17 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
      });
   };
 
-  $scope.toMap = function(){
-    $scope.show();
-    var areaJson = Search.getArea();
-    if(navigator.geolocation) {
-  	    navigator.geolocation.getCurrentPosition(function(position) {
-  				$scope.latitude = position.coords.latitude;
-  		    $scope.longitude = position.coords.longitude;
-  		    $scope.accuracy = position.coords.accuracy;
-  		    $scope.$apply();
-
-  				var latlng = new google.maps.LatLng($scope.latitude,$scope.longitude);
-  		    var httpz = "https://maps.googleapis.com/maps/api/geocode/json?latlng="+$scope.latitude+","+$scope.longitude+"&key=AIzaSyDwb8lxMiMVIVM4ZQ98RssfumMr8Olepzw";
-  		    $http.get(httpz).success(function(data){
-  		   	    $scope.full_address = data.results[0].formatted_address;
-          });
-          var log = 0;
-          Search.remove();
-  		    Search.addLoc($scope.latitude,$scope.longitude);
-  		    Search.setType("0");
-  				angular.forEach(areaJson.outlet, function(value,key){
-  						var pathArray = google.maps.geometry.encoding.decodePath(value.area);
-  						var pathPoly = new google.maps.Polygon({
-  							path: pathArray
-  						});
-  						if(google.maps.geometry.poly.containsLocation(new google.maps.LatLng($scope.latitude,$scope.longitude),pathPoly)) {
-  						    log++;
-  						    Search.addOutlet(value.id);
-  						}
-  				});
-  				$scope.areaCoverage = log;
-  				$scope.hide();
-  			});
-  		}
-  		else {
-  			$scope.hide();
-  		}
+  $scope.showAlert = function() {
+     var confirmPopup = $ionicPopup.confirm({
+       title: 'Delivery Service',
+       template: 'Sorry, we don\'t deliver to your location<br/>If you believe this is a mistake, please use the manual input'
+     });
+     confirmPopup.then(function(res) {
+         if(res) {
+           Search.setDeliveryType(1);
+           $location.path('/location-search/');
+         }
+     });
   };
 
   $ionicModal.fromTemplateUrl('chooseAddress-modal.html', {
@@ -480,11 +451,13 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
                       $location.path("/restaurant/");
                   }
               });
+              $scope.hide();
+              $scope.showAlert();
             });
           }
       } else {
           Search.setDeliveryType(1);
-          console.log("DELIVERY USE INPUT" + $scope.data.new_type);
+          $location.path('/location-search/');
       }
     }
     $scope.modal2.hide();
@@ -555,7 +528,6 @@ app.controller('orderCtrl',function($scope,$stateParams,$ionicModal,$http,Cart,$
 	$scope.hide = function(){
 	    $ionicLoading.hide();
 	};
-
 
 	var urlLogin = url + "/outletMenuCategory.php?brand_id="+$scope.brand_id+"&callback=JSON_CALLBACK";
 	$http.jsonp(urlLogin).success(function(data){
@@ -660,142 +632,12 @@ app.controller('orderCtrl',function($scope,$stateParams,$ionicModal,$http,Cart,$
 	};
 });
 
-
-
-
-app.controller('mapsCtrl',function($scope,$http,$ionicLoading,Search,$location,Customer) {
-	var areaJson = {};
-	$scope.searchInput = false;
-	Search.init();
-	Search.setType("0");
-	$scope.areaCoverage = 0;
-	$scope.latitude = -6.219260;
-	$scope.longitude = 106.812410;
-
-	$scope.logged_in = Customer.isLogged();
-	$scope.$on('state.update', function () {
-    	$scope.logged_in = false;
-    });
-
-	$scope.show = function() {
-	    $ionicLoading.show({
-	      template: 'Loading...'
-	    });
-	};
-	$scope.hide = function(){
-	    $ionicLoading.hide();
-	};
-
-	$scope.show();
-	var mapOptions = {	center: new google.maps.LatLng($scope.latitude,$scope.longitude),
-					 	zoom : 15,
-						mapTypeId: google.maps.MapTypeId.ROADMAP,
-						streetViewControl: false
-					 };
-
-	$scope.map =  new google.maps.Map(document.getElementById('map'), mapOptions);
-	var myLocation = new google.maps.Marker({
-		            position: new google.maps.LatLng($scope.latitude,$scope.longitude),
-		            map: $scope.map,
-					draggable: true,
-		            title: "My Location"
-				});
-	var input = document.getElementById('addr_input');
-	var autooption = {
-		componentRestrictions : { country: 'id' }
-	};
-	var autocomplete = new google.maps.places.Autocomplete(input,autooption);
-
-	google.maps.event.addListener(autocomplete, 'place_changed', function() {
-		myLocation.setVisible(false);
-		var place = autocomplete.getPlace();
-		var latlng = place.geometry.location;
-		$scope.map.setCenter(latlng);
-		myLocation.setPosition(latlng);
-		myLocation.setVisible(true);
-	});
-
-	google.maps.event.addListener(myLocation,'dragend',function(){
-		var latlng = myLocation.getPosition();
-		$scope.latitude = latlng.lat();
-		$scope.longitude = latlng.lng();
-		$scope.map.setCenter(latlng);
-		var httpz = "https://maps.googleapis.com/maps/api/geocode/json?latlng="+$scope.latitude+","+$scope.longitude+"&key=AIzaSyDwb8lxMiMVIVM4ZQ98RssfumMr8Olepzw";
-		$http.get(httpz).success(function(data){
-		   	$scope.full_address = data.results[0].formatted_address;
-		});
-		var log = 0;
-		Search.remove();
-		Search.addLoc($scope.latitude,$scope.longitude);
-		Search.setType("0");
-		angular.forEach(areaJson.outlet, function(value,key){
-				var pathArray = google.maps.geometry.encoding.decodePath(value.area);
-				var pathPoly = new google.maps.Polygon({
-					path: pathArray
-				});
-				if(google.maps.geometry.poly.containsLocation(new google.maps.LatLng($scope.latitude,$scope.longitude),pathPoly)) {
-				    log++;
-				    Search.addOutlet(value.id);
-				}
-		});
-		$scope.areaCoverage = log;
-	});
-
-  areaJson = Search.getArea();
-  if(navigator.geolocation) {
-			myLocation.setVisible(false);
-	    navigator.geolocation.getCurrentPosition(function(position) {
-				$scope.latitude = position.coords.latitude;
-		    $scope.longitude = position.coords.longitude;
-		    $scope.accuracy = position.coords.accuracy;
-		    $scope.$apply();
-
-				var latlng = new google.maps.LatLng($scope.latitude,$scope.longitude);
-				myLocation.setPosition(latlng);
-				myLocation.setVisible(true);
-		        $scope.map.setCenter(latlng);
-
-		    var httpz = "https://maps.googleapis.com/maps/api/geocode/json?latlng="+$scope.latitude+","+$scope.longitude+"&key=AIzaSyDwb8lxMiMVIVM4ZQ98RssfumMr8Olepzw";
-		    $http.get(httpz).success(function(data){
-		   	    $scope.full_address = data.results[0].formatted_address;
-        });
-        var log = 0;
-        Search.remove();
-		    Search.addLoc($scope.latitude,$scope.longitude);
-		    Search.setType("0");
-				angular.forEach(areaJson.outlet, function(value,key){
-						var pathArray = google.maps.geometry.encoding.decodePath(value.area);
-						var pathPoly = new google.maps.Polygon({
-							path: pathArray
-						});
-						if(google.maps.geometry.poly.containsLocation(new google.maps.LatLng($scope.latitude,$scope.longitude),pathPoly)) {
-						    log++;
-						    Search.addOutlet(value.id);
-						}
-				});
-				$scope.areaCoverage = log;
-				$scope.hide();
-			});
-		}
-		else {
-			$scope.hide();
-		}
-
-
-	$scope.searchAddress = function() {
-		$scope.searchInput = true;
-	};
-});
-
 app.controller('locationCtrl',function($scope,$http,$ionicLoading,Search,$location,Customer) {
 	var areaJson = Search.getArea();
 	$scope.searchInput = true;
-	Search.init();
-	Search.setType("0");
 	$scope.areaCoverage = 0;
 	$scope.latitude = -6.219260;
 	$scope.longitude = 106.812410;
-	var log = 0;
 	$scope.logged_in = Customer.isLogged();
 	$scope.$on('state.update', function () {
     	$scope.logged_in = false;
@@ -820,7 +662,7 @@ app.controller('locationCtrl',function($scope,$http,$ionicLoading,Search,$locati
 	var myLocation = new google.maps.Marker({
 		            position: new google.maps.LatLng($scope.latitude,$scope.longitude),
 		            map: $scope.map,
-					draggable: true,
+					      draggable: true,
 		            title: "My Location"
 				});
 	var input = document.getElementById('addr_input');
@@ -838,21 +680,16 @@ app.controller('locationCtrl',function($scope,$http,$ionicLoading,Search,$locati
 		$scope.map.setCenter(latlng);
 		myLocation.setPosition(latlng);
 		myLocation.setVisible(true);
-		log = 0;
-		Search.remove();
 		Search.addLoc($scope.latitude,$scope.longitude);
-		Search.setType("0");
 		angular.forEach(areaJson.outlet, function(value,key){
 				var pathArray = google.maps.geometry.encoding.decodePath(value.area);
 				var pathPoly = new google.maps.Polygon({
 					path: pathArray
 				});
 				if(google.maps.geometry.poly.containsLocation(latlng,pathPoly)) {
-				    log++;
 				    Search.addOutlet(value.id);
 				}
 		});
-		$scope.areaCoverage = log;
 		$scope.$apply();
 	});
 
@@ -865,21 +702,16 @@ app.controller('locationCtrl',function($scope,$http,$ionicLoading,Search,$locati
 		$http.get(httpz).success(function(data){
 		   	$scope.full_address = data.results[0].formatted_address;
 		});
-		log = 0;
-		Search.remove();
 		Search.addLoc($scope.latitude,$scope.longitude);
-		Search.setType("0");
 		angular.forEach(areaJson.outlet, function(value,key){
 				var pathArray = google.maps.geometry.encoding.decodePath(value.area);
 				var pathPoly = new google.maps.Polygon({
 					path: pathArray
 				});
 				if(google.maps.geometry.poly.containsLocation(latlng,pathPoly)) {
-				    log++;
 				    Search.addOutlet(value.id);
 				}
 		});
-		$scope.areaCoverage = log;
 	});
 });
 

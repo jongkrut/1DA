@@ -453,8 +453,8 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
                       Search.setDeliveryType(0);
                       $scope.hide();
                       $location.path("/restaurant/");
-                      i++;
                   }
+                  i++;
               });
               if(i == areaJson.outlet.length) {
                 $scope.hide();

@@ -597,3 +597,16 @@ legend {
 .item-constent {
   padding:16px !important;
 }
+
+.pac-item {
+  height:50px;
+  line-height:50px;
+  font-size:12px;
+}
+.pac-item:hover {
+  background-color:rgba(0,0,0,0.1);
+  color:black;
+}
+.pac-icon {
+  margin-top:15px;
+}

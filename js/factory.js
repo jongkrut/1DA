@@ -218,7 +218,7 @@ angular.module('customer',[]).factory('Customer',function($rootScope,$http){
 				var addr = 0;
 				for(var i = 0; i < address.length;i++){
 					if(address[i].default_address == 1) {
-						addr = i;
+						addr = address[i].address_id;
 						break;
 					}
 				}

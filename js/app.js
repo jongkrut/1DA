@@ -149,12 +149,8 @@ app.run(function($rootScope,$ionicNavBarDelegate,$ionicSideMenuDelegate,$ionicPo
 		$ionicNavBarDelegate.back();
 	};
 
-	$rootScope.$on('$destroy', function() {
-	    $rootSscope.popover.remove();
-	});
 	$rootScope.logout = function() {
 		Customer.logout();
-		$rootScope.popover.hide();
 	};
 });
 
@@ -218,7 +214,6 @@ app.controller('historyCtrl',function($scope,$http,$state,$stateParams,$ionicSid
 
 app.controller('accountCtrl',function($scope,$http,Customer,$state){
 	$scope.customer = Customer.getCustomer();
-
 });
 
 app.controller('loginCtrl',function($scope,$http,Customer,Search,$state){
@@ -228,6 +223,9 @@ app.controller('loginCtrl',function($scope,$http,Customer,Search,$state){
 	if($scope.logged_in == true) {
 		$state.go('home');
 	}
+  $scope.$on('state.login', function () {
+    	$scope.logged_in = true;
+  });
 	$scope.doLogin = function (user) {
 			var urlLogin = url + "/login.php?company_id="+company_id+"&user="+user.email+":"+user.password+"&callback=JSON_CALLBACK";
 			$http.jsonp(urlLogin).success(function(data) {
@@ -316,7 +314,9 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
 
 	$scope.$on('state.update', function () {
     	$scope.logged_in = false;
-    	$scope.newAddress = true;
+  });
+  $scope.$on('state.login', function () {
+    	$scope.logged_in = true;
   });
 	if($scope.logged_in == true){
 		$scope.customer = Customer.getCustomer();
@@ -473,8 +473,6 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
 	    $scope.modal1.remove();
       $scope.modal2.remove();
 	});
-
-
 });
 
 app.controller('restoCtrl',function($scope,$http,Search,Customer){
@@ -484,6 +482,9 @@ app.controller('restoCtrl',function($scope,$http,Search,Customer){
   $scope.details = Search.getOutletDetails()
 	$scope.$on('state.update', function () {
     	$scope.logged_in = false;
+  });
+  $scope.$on('state.login', function () {
+    	$scope.logged_in = true;
   });
 
   $scope.brand_id = 0;
@@ -514,7 +515,10 @@ app.controller('orderCtrl',function($scope,$stateParams,$ionicModal,$http,Cart,$
 	$scope.logged_in = Customer.isLogged();
 	$scope.$on('state.update', function () {
     	$scope.logged_in = false;
-    });
+  });
+  $scope.$on('state.login', function () {
+        $scope.logged_in = true;
+  });
 
 	$scope.show = function() {
 	    $ionicLoading.show({
@@ -637,7 +641,10 @@ app.controller('locationCtrl',function($scope,$http,$ionicLoading,Search,$locati
 	$scope.logged_in = Customer.isLogged();
 	$scope.$on('state.update', function () {
     	$scope.logged_in = false;
-    });
+  });
+  $scope.$on('state.login', function () {
+    	$scope.logged_in = true;
+  });
 
 	$scope.show = function() {
 	    $ionicLoading.show({

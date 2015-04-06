@@ -354,7 +354,6 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
           $scope.addresses = Customer.getAddress();
           $scope.data.new_type = 0;
           $scope.openModal(2);
-          console.log($scope.data.selected);
         }
         return true;
        }
@@ -428,6 +427,7 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
       Search.setDeliveryAddress($scope.data.selected);
       if($scope.data.new_type == 0) {
         $scope.show();
+        var i = 0;
         var areaJson = Search.getArea();
         if(navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
@@ -441,7 +441,7 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
               $http.get(httpz).success(function(data){
                    $scope.full_address = data.results[0].formatted_address;
               });
-              var i = 0;
+              i = 0;
               Search.addLoc($scope.latitude,$scope.longitude);
               angular.forEach(areaJson.outlet, function(value,key){
                   var pathArray = google.maps.geometry.encoding.decodePath(value.area);
@@ -461,6 +461,8 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
                 $scope.showAlert();
               }
             });
+          } else {
+            $scope.hide();
           }
       } else {
           Search.setDeliveryType(1);

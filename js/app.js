@@ -426,11 +426,10 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
     } else {
       Search.setDeliveryAddress($scope.data.selected);
       if($scope.data.new_type == 0) {
-        $scope.show('Searching for Restaurantzss...');
+        $scope.show('Searching for Restaurants...');
         var found;
         var areaJson = Search.getArea();
-        if(navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
+        navigator.geolocation.getCurrentPosition(function(position) {
               $scope.show('Got Your Location!');
 
               $scope.latitude = position.coords.latitude;
@@ -466,10 +465,7 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
               if(found == false) {
                 $scope.showAlert();
               }
-            });
-          } else {
-            $scope.hide();
-          }
+        });
       } else {
           Search.setDeliveryType(1);
           $location.path('/location-search/');

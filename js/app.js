@@ -705,7 +705,7 @@ app.controller('locationCtrl',function($scope,$http,$ionicLoading,Search,$locati
 
 	google.maps.event.addListener(myLocation,'dragend',function(){
 		var latlng = myLocation.getPosition();
-    $scope.areaCoverage = 0;'
+    $scope.areaCoverage = 0;
 		$scope.latitude = latlng.lat();
 		$scope.longitude = latlng.lng();
 		$scope.map.setCenter(latlng);

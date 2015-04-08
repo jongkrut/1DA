@@ -116,6 +116,9 @@ angular.module('search',[]).factory('Search',function(){
 		setOutlet : function(id) {
 			localStorage.setItem("outlet",id);
 		},
+		removeOutlet : function(id) {
+			localStorage.removeItem("outlet");
+		},
 		addLoc: function(lat,lng) {
 			localStorage.setItem("latitude",lat);
 			localStorage.setItem("longitude",lng);

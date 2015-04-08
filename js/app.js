@@ -429,7 +429,7 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
         $scope.show('Searching for Restaurants...');
         var found;
         var areaJson = Search.getArea();
-        var options = { timeout: 31000, enableHighAccuracy: true, maximumAge: 90000 };
+        var options = { timeout: 30000, enableHighAccuracy: true, maximumAge: 90000 };
         navigator.geolocation.getCurrentPosition(function(position) {
               $scope.show('Got Your Location!');
 
@@ -681,6 +681,7 @@ app.controller('locationCtrl',function($scope,$http,$ionicLoading,Search,$locati
 
 	google.maps.event.addListener(autocomplete, 'place_changed', function() {
 		myLocation.setVisible(false);
+    $scope.areaCoverage = 0;
 		var place = autocomplete.getPlace();
 		var latlng = place.geometry.location;
 		$scope.latitude = latlng.lat();
@@ -704,6 +705,7 @@ app.controller('locationCtrl',function($scope,$http,$ionicLoading,Search,$locati
 
 	google.maps.event.addListener(myLocation,'dragend',function(){
 		var latlng = myLocation.getPosition();
+    $scope.areaCoverage = 0;'
 		$scope.latitude = latlng.lat();
 		$scope.longitude = latlng.lng();
 		$scope.map.setCenter(latlng);

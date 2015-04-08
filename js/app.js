@@ -334,7 +334,7 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
   $scope.showSheet = function(){
     var hideSheet = $ionicActionSheet.show({
        buttons: [
-         { text: 'Pick Up' },
+         { text: 'Self Pick Up' },
          { text: 'Delivery' }
        ],
        titleText: 'Choose Your Service',

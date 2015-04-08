@@ -427,7 +427,7 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
       Search.setDeliveryAddress($scope.data.selected);
       if($scope.data.new_type == 0) {
         $scope.show();
-        var i = 0;
+        var found = false;
         var areaJson = Search.getArea();
         if(navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
@@ -441,23 +441,23 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
               $http.get(httpz).success(function(data){
                    $scope.full_address = data.results[0].formatted_address;
               });
-              i = 0;
+              var i = 0;
               Search.addLoc($scope.latitude,$scope.longitude);
-              angular.forEach(areaJson.outlet, function(value,key){
-                  var pathArray = google.maps.geometry.encoding.decodePath(value.area);
+              for(i = 0; i < areaJson.outlet.length; i++){
+                  var pathArray = google.maps.geometry.encoding.decodePath(areaJson.outlet[i].area);
                   var pathPoly = new google.maps.Polygon({
                       path: pathArray
                   });
-                  if(google.maps.geometry.poly.containsLocation(new google.maps.LatLng($scope.latitude,$scope.longitude),pathPoly)) {
-                      Search.setOutlet(value.id);
+                  if(google.maps.geometry.poly.containsLocation(latlng,pathPoly)) {
+                      Search.setOutlet(areaJson.outlet[i].id);
                       Search.setDeliveryType(0);
-                      $scope.hide();
-                      $location.path("/restaurant/");
+                      found = true;
                   }
-                  i++;
-              });
-              if(i == areaJson.outlet.length) {
-                $scope.hide();
+              };
+              $scope.hide();
+              if(found == true) {
+                $location.path("/restaurant/");
+              } else {
                 $scope.showAlert();
               }
             });

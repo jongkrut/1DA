@@ -466,7 +466,7 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
               if(found == false) {
                 $scope.showAlert();
               }
-        },function(){},options);
+        },function(){ $scope.hide() },options);
       } else {
           Search.setDeliveryType(1);
           $location.path('/location-search/');

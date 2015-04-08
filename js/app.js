@@ -429,6 +429,7 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
         $scope.show('Searching for Restaurants...');
         var found;
         var areaJson = Search.getArea();
+        var options = { timeout: 31000, enableHighAccuracy: true, maximumAge: 90000 };
         navigator.geolocation.getCurrentPosition(function(position) {
               $scope.show('Got Your Location!');
 
@@ -465,7 +466,7 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
               if(found == false) {
                 $scope.showAlert();
               }
-        });
+        },function(){},options);
       } else {
           Search.setDeliveryType(1);
           $location.path('/location-search/');

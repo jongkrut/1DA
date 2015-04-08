@@ -322,9 +322,9 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
 		$scope.customer = Customer.getCustomer();
 	}
 
-	$scope.show = function() {
+	$scope.show = function(template) {
 	    $ionicLoading.show({
-	      template: 'Searching for Restaurants ...'
+	      template: template
 	    });
 	};
 	$scope.hide = function(){
@@ -406,7 +406,7 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
   };
 	$scope.applyDelivery = function() {
     if($scope.data.selected > 0) {
-      $scope.show();
+      $scope.show('Searching for Restaurants ...');
       var addr = Customer.getAddressByIndex($scope.data.selected);
       Search.setDeliveryAddress(addr.address_id);
       $scope.latitude = addr.latitude;
@@ -426,11 +426,13 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
     } else {
       Search.setDeliveryAddress($scope.data.selected);
       if($scope.data.new_type == 0) {
-        $scope.show();
-        var found = false;
+        $scope.show('Searching for Restaurantzss...');
+        var found;
         var areaJson = Search.getArea();
         if(navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
+              $scope.show('Got Your Location!');
+
               $scope.latitude = position.coords.latitude;
               $scope.longitude = position.coords.longitude;
               $scope.accuracy = position.coords.accuracy;
@@ -452,12 +454,16 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
                       Search.setOutlet(areaJson.outlet[i].id);
                       Search.setDeliveryType(0);
                       found = true;
+                      break;
+                  }
+                  if(i == (areaJson.outlet.length-1)) {
+                      found = false;
                   }
               };
               $scope.hide();
               if(found == true) {
-                $location.path("/restaurant/");
-              } else {
+                $location.path("/restaurant/"); }
+              if(found == false) {
                 $scope.showAlert();
               }
             });

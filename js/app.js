@@ -130,7 +130,7 @@ app.config(function($urlRouterProvider,$ionicConfigProvider){
 	  $ionicConfigProvider.backButton.previousTitleText('');
 });
 
-app.run(function($rootScope,$ionicNavBarDelegate,$ionicSideMenuDelegate,$ionicPopover,$location,Customer,Search,$http,$ionicPlatform){
+app.run(function($rootScope,$ionicNavBarDelegate,$ionicSideMenuDelegate,$ionicPopover,$location,Customer,Search,Cart,$http,$ionicPlatform){
   $ionicPlatform.ready(function() {
 	   var logged = Customer.isLogged();
 		 if(logged == true) {
@@ -144,6 +144,13 @@ app.run(function($rootScope,$ionicNavBarDelegate,$ionicSideMenuDelegate,$ionicPo
 	$rootScope.toHome = function() {
 		$location.path('/');
 	};
+
+  $rootScope.toCart = function() {
+    if(Cart.getTotalItems() > 0) {
+      var outlet_id = Search.getOutlet();
+      $location.path('/order/'+outlet_id+'/8/');
+    }
+  };
 
 	$rootScope.toggleLeft = function() {
 		$ionicSideMenuDelegate.toggleLeft();

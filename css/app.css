@@ -3,7 +3,7 @@
   src: url("../fonts/Oswald-Regular.ttf") format("truetype");
 }
 
-.panel {
+.sidecolor, .menu {
   background-image: url('../img/left_panel_bg.jpg') !important;
   background-repeat: repeat-y !important;
   background-size:100%;

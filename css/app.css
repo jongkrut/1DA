@@ -289,7 +289,7 @@
 .sidecolor {
     position:relative;
     width:100%;
-    height:2000px;
+    height:100vh;
     background-image:url('../img/left_panel_bg.jpg');
     background-size:100% auto;
 

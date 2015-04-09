@@ -3,6 +3,13 @@
   src: url("../fonts/Oswald-Regular.ttf") format("truetype");
 }
 
+.panel {
+  background-image: url('../img/left_panel_bg.jpg') !important;
+  background-repeat: repeat-y !important;
+  height:100%;
+  width:100%;
+}
+
 .navbar {
 	background-color:#ffd909;
 	border-color:#ffd909;

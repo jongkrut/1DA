@@ -28,61 +28,63 @@
 			<ion-nav-view animation="slide-left-right" ></ion-nav-view>
     </ion-side-menu-content>
     <ion-side-menu side="left" ng-controller="panelCtrl" >
-			<ion-content style="background-image: url(img/left_panel_bg.jpg) !important; background-repeat: repeat-y !important; ">
-        <div class="list" style="background-color:#3d3d3d;text-align:left;height:44px;padding:10px 0 0 10px;">
-            <img alt="Brand" src="img/fatptext.png" id="brand" style="height:25px;width:auto;"/>
-        </div>
+			<ion-content class="panel">
+				<div class="panel">
+	        <div class="list" style="background-color:#3d3d3d;text-align:left;height:44px;padding:10px 0 0 10px;">
+	            <img alt="Brand" src="img/fatptext.png" id="brand" style="height:25px;width:auto;"/>
+	        </div>
 
-    		<div class="list" id="panelList">
-            <logged ng-hide="logged_in">
-                <a class="item" href="#/login" menu-close onmouseover="icon_hover('sign')" onmouseout="icon_out('sign')">
-                   <div id="sign" class="panel_icon"><i class="icon ion-person"></i></div> Sign In
-                </a>
-            </logged>
-            <a class="item" ng-href="#/" menu-close onmouseover="icon_hover('search_restaurants')" onmouseout="icon_out('search_restaurants')">
-                 <div id="search_restaurants" class="panel_icon" style="text-align:left;padding-left:2.5px;padding-top:1px"><i class="icon ion-navigate"></i></div> Search FATBURGER Store
-            </a>
-						<a class="item" ng-href="#/menu/" menu-close onmouseover="icon_hover('view_menu')" onmouseout="icon_out('view_menu')">
-                 <div id="view_menu" class="panel_icon"><i class="icon ion-clipboard"></i></div> View Menu
-            </a>
-            <a class="item" href="#/promotion/" menu-close onmouseover="icon_hover('promotion')" onmouseout="icon_out('promotion')">
-                <div id="promotion" class="panel_icon"><i class="icon ion-star"></i></div> Promotions
-            </a>
-            <a class="item" href="#/feedback/" menu-close menu-close onmouseover="icon_hover('problems&feedback')" onmouseout="icon_out('problems&feedback')">
-                <div id="problems&feedback" class="panel_icon"><i class="icon ion-help"></i></div> Problems & Feedback
-            </a>
-            <logged ng-show="logged_in">
+	    		<div class="list" id="panelList">
+	            <logged ng-hide="logged_in">
+	                <a class="item" href="#/login" menu-close onmouseover="icon_hover('sign')" onmouseout="icon_out('sign')">
+	                   <div id="sign" class="panel_icon"><i class="icon ion-person"></i></div> Sign In
+	                </a>
+	            </logged>
+	            <a class="item" ng-href="#/" menu-close onmouseover="icon_hover('search_restaurants')" onmouseout="icon_out('search_restaurants')">
+	                 <div id="search_restaurants" class="panel_icon" style="text-align:left;padding-left:2.5px;padding-top:1px"><i class="icon ion-navigate"></i></div> Search FATBURGER Store
+	            </a>
+							<a class="item" ng-href="#/menu/" menu-close onmouseover="icon_hover('view_menu')" onmouseout="icon_out('view_menu')">
+	                 <div id="view_menu" class="panel_icon"><i class="icon ion-clipboard"></i></div> View Menu
+	            </a>
+	            <a class="item" href="#/promotion/" menu-close onmouseover="icon_hover('promotion')" onmouseout="icon_out('promotion')">
+	                <div id="promotion" class="panel_icon"><i class="icon ion-star"></i></div> Promotions
+	            </a>
+	            <a class="item" href="#/feedback/" menu-close menu-close onmouseover="icon_hover('problems&feedback')" onmouseout="icon_out('problems&feedback')">
+	                <div id="problems&feedback" class="panel_icon"><i class="icon ion-help"></i></div> Problems & Feedback
+	            </a>
+	            <logged ng-show="logged_in">
 
-                <a class="item" href="#/my-account" menu-close onmouseover="icon_hover('my_account')" onmouseout="icon_out('my_account')">
-                   <div id="my_account" class="panel_icon"><i class="icon ion-person"></i></div> My Account
-                </a>
-                <a class="item" href="#/my-address" menu-close onmouseover="icon_hover('delivery_address')" onmouseout="icon_out('delivery_address')">
-                    <div id="delivery_address" class="panel_icon"><i class="icon ion-map"></i></div> Delivery Address
-                </a>
-                <a class="item" href="#/history/" menu-close onmouseover="icon_hover('order_history')" onmouseout="icon_out('order_history')">
-                    <div id="order_history" class="panel_icon"><i class="icon ion-clock"></i></div> Order History
-                </a>
-            </logged>
-    		</div>
+	                <a class="item" href="#/my-account" menu-close onmouseover="icon_hover('my_account')" onmouseout="icon_out('my_account')">
+	                   <div id="my_account" class="panel_icon"><i class="icon ion-person"></i></div> My Account
+	                </a>
+	                <a class="item" href="#/my-address" menu-close onmouseover="icon_hover('delivery_address')" onmouseout="icon_out('delivery_address')">
+	                    <div id="delivery_address" class="panel_icon"><i class="icon ion-map"></i></div> Delivery Address
+	                </a>
+	                <a class="item" href="#/history/" menu-close onmouseover="icon_hover('order_history')" onmouseout="icon_out('order_history')">
+	                    <div id="order_history" class="panel_icon"><i class="icon ion-clock"></i></div> Order History
+	                </a>
+	            </logged>
+	    		</div>
 
-    		<div class="list" id="panelList2">
-    			<a class="item" href="#/about-us" menu-close>
-                About Us
-            </a>
-            <a class="item" href="#/how-to-order" menu-close>
-                How to Order
-            </a>
-            <a class="item" href="#/faq/" menu-close>
-                FAQ
-            </a>
-            <a class="item" href="#/tc/" menu-close>
-                Terms and Conditions
-            </a>
-    		</div>
+	    		<div class="list" id="panelList2">
+	    			<a class="item" href="#/about-us" menu-close>
+	                About Us
+	            </a>
+	            <a class="item" href="#/how-to-order" menu-close>
+	                How to Order
+	            </a>
+	            <a class="item" href="#/faq/" menu-close>
+	                FAQ
+	            </a>
+	            <a class="item" href="#/tc/" menu-close>
+	                Terms and Conditions
+	            </a>
+	    		</div>
 
-        <div class="button-bar padding" ng-show="logged_in">
-            <button class="button log_out button_dark_on_yellow" ng-click="logout()" menu-close><i class="icon ion-log-out"></i>   Log Out</button>
-        </div>
+	        <div class="button-bar padding" ng-show="logged_in">
+	            <button class="button log_out button_dark_on_yellow" ng-click="logout()" menu-close><i class="icon ion-log-out"></i>   Log Out</button>
+	        </div>
+				</div>
 			</ion-content>
     </ion-side-menu>
 </ion-side-menus>

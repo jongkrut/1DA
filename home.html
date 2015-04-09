@@ -107,19 +107,25 @@
 					</addrType>
 			</ion-radio>
 			<ion-radio ng-model="data.selected" ng-value="0">
-				Create New
+				Create New Address
 			</ion-radio>
 			</div>
 				<div class="list padding" ng-show="data.selected==0">
 
 					<label class="item item-radio">
 						<input type="radio" name="new_type" ng-model="data.new_type" ng-value="0">
-						<div class="item">Current Location</div>
+						<div class="item item-text-wrap">
+							Use Your Current Location
+							<p>Please enable 'Location' in your phone. We will search nearest FATBURGER outlet to your current location.</p>
+						</div>
 						<i class="radio-icon ion-checkmark"></i>
 					</label>
 					<label class="item item-radio">
 						<input type="radio" name="new_type" ng-model="data.new_type" ng-value="1">
-						<div class="item">Input Address</div>
+						<div class="item item-text-wrap">
+							Input Your Address Manually
+							<p>Select the nearest FATBURGER outlet that will deliver to your location.</p>
+						</div>
 						<i class="radio-icon ion-checkmark"></i>
 					</label>
 				</div>

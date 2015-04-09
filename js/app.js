@@ -79,6 +79,10 @@ app.config(['$stateProvider', function($stateProvider) {
 						url : '/promotion2/:page',
 						templateUrl : 'promotion2.html',
 						controller : 'promotionCtrl'
+  }).state('storelist',{
+            url : '/storelist/',
+            templateUrl : 'storelist.html',
+            controller : 'storeListCtrl'
   }).state('menu',{
             url : '/menu/',
             templateUrl : 'menu.html',
@@ -361,15 +365,9 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
   };
 
   $scope.showAlert = function() {
-     var confirmPopup = $ionicPopup.confirm({
+     var confirmPopup = $ionicPopup.alert({
        title: 'Delivery Service',
-       template: 'Sorry, we don\'t deliver to your location<br/>If you believe this is a mistake, please use the manual input'
-     });
-     confirmPopup.then(function(res) {
-         if(res) {
-           Search.setDeliveryType(1);
-           $location.path('/location-search/');
-         }
+       template: 'Sorry, we don\'t deliver to your location<br/>If you believe this is a mistake, please choose the manual input.'
      });
   };
 
@@ -431,18 +429,11 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
         var areaJson = Search.getArea();
         var options = { timeout: 30000, enableHighAccuracy: true, maximumAge: 90000 };
         navigator.geolocation.getCurrentPosition(function(position) {
-              $scope.show('Got Your Location!');
-
               $scope.latitude = position.coords.latitude;
               $scope.longitude = position.coords.longitude;
               $scope.accuracy = position.coords.accuracy;
               $scope.$apply();
-
               var latlng = new google.maps.LatLng($scope.latitude,$scope.longitude);
-              var httpz = "https://maps.googleapis.com/maps/api/geocode/json?latlng="+$scope.latitude+","+$scope.longitude+"&key=AIzaSyDwb8lxMiMVIVM4ZQ98RssfumMr8Olepzw";
-              $http.get(httpz).success(function(data){
-                   $scope.full_address = data.results[0].formatted_address;
-              });
               var i = 0;
               Search.addLoc($scope.latitude,$scope.longitude);
               for(i = 0; i < areaJson.outlet.length; i++){
@@ -466,10 +457,13 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
               if(found == false) {
                 $scope.showAlert();
               }
-        },function(){ $scope.hide() },options);
+          },function() {
+              $scope.hide();
+              $scope.showAlert();
+          },options);
       } else {
           Search.setDeliveryType(1);
-          $location.path('/location-search/');
+          $scope.modal1.show();
       }
     }
     $scope.modal2.hide();
@@ -1194,6 +1188,10 @@ app.controller('aboutCtrl',function($scope,$stateParams,$ionicModal,$http,Cart,$
 	}).then(function (modal) {
 		$scope.modal = modal;
 	});
+});
+
+app.controller('storeListCtrl',function($scope,$http,Search){
+  $scope.list = Search.getArea();
 });
 
 app.controller('menuCtrl',function($scope,$stateParams,$http,Customer){

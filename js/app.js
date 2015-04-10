@@ -412,7 +412,7 @@ app.controller('homeCtrl',function($scope,$location,$ionicActionSheet,$ionicSide
 	$scope.applyDelivery = function() {
     if($scope.data.selected > 0) {
       $scope.show('Searching for Restaurants ...');
-      var addr = Customer.getAddressByIndex($scope.data.selected);
+      var addr = Customer.getAddressById($scope.data.selected);
       Search.setDeliveryAddress(addr.address_id);
       $scope.latitude = addr.latitude;
       $scope.longitude = addr.longitude;
@@ -877,7 +877,7 @@ app.controller('cartCtrl',function($scope,$http,$stateParams,$ionicModal,$ionicL
   $scope.closeModal = function(index) {
   		if(index == 1) {
   			$scope.data.datetimetype = 1;
-			$scope.data.datetime = new Date();
+			  $scope.data.datetime = new Date();
 	    	$scope.modal1.hide();
 	    	var momentz = moment($scope.data.datetime);
 	    	Cart.updateTime($scope.data.datetimetype,momentz.unix());
@@ -892,6 +892,7 @@ app.controller('cartCtrl',function($scope,$http,$stateParams,$ionicModal,$ionicL
 	    $scope.modal1.hide();
 	    var momentz = moment($scope.data.datetime);
 	    Cart.updateTime($scope.data.datetimetype,momentz.unix());
+      $scope.toCheckout();
 	  } else {
 
 	  }
@@ -918,6 +919,8 @@ app.controller('checkoutCtrl',function($scope,$http,$stateParams,$ionicPopup,$io
 	$scope.outlet_id = $stateParams.outlet_id;
 	$scope.brand_id = $stateParams.brand_id;
   $scope.serviceType = Search.getType();
+  $scope.order_datetime = moment.unix(Cart.getDeliveryTime()).format('YYYY-MM-DD H:mm:ss');
+  $scope.order_type = Cart.getDeliveryType();
 	$scope.logged_in = Customer.isLogged();
 	$scope.addressInput = {};
 	$scope.deliveryInstruction = {};
@@ -933,12 +936,11 @@ app.controller('checkoutCtrl',function($scope,$http,$stateParams,$ionicPopup,$io
 	$scope.totalItems = Cart.getTotalItems();
 	$scope.tax_service_charge = Cart.getTaxCharge()/100 * $scope.totalPrice;
 
+  console.log($scope.order_datetime);
+
   if($scope.serviceType == 1) {
     $scope.pickupLocation = Search.getOutletDetails();
-    $scope.order_type = Cart.getDeliveryType();
-		$scope.order_datetime = Cart.getDeliveryTime();
   } else {
-    $scope.deliveryType = Search.getDeliveryType();
     $scope.deliveryAddress = Search.getDeliveryAddress();
     console.log($scope.deliveryAddress);
     if($scope.deliveryAddress!=0) {

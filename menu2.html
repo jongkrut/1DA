@@ -27,6 +27,9 @@
                     <span style="font-size:14px" class="font-white">{{att.attribute_name}} {{att.attribute_price | currency : 'Rp ' : 0}}</span>
                 </ion-checkbox>
             </div>
+            <div class="padding">
+              <button class="button button_dark_on_yellow" style="width:100%">Start Your Ordering Here</button>
+            </div>
          </ion-content>
     </form>
 </ion-modal-view>
@@ -44,9 +47,9 @@
             <button class="button-clear" ng-click="toHome()">
                 <i class="ion-home icon-header" style="font-size:20px"></i>
             </button>
-            <button class="button-clear">
-                <i class="ion-star icon-header" style="font-size:20px"></i>
-            </button>
+            <button class="button-clear" ng-click="toCart()">
+        			<i class="icon ion-ios-cart-outline" style="font-size:20px;color:black"></i>
+        		</button>
         </div>
     </ion-nav-buttons>
 </ion-nav-bar>

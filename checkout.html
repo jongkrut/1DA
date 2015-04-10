@@ -9,9 +9,6 @@
 		<button class="button-clear" ng-click="toHome()">
 			<i class="ion-home icon-header" style="font-size:20px"></i>
 		</button>
-		<button class="button-clear">
-			<i class="ion-star icon-header" style="font-size:20px"></i>
-		</button>
 	</ion-nav-buttons>
 </ion-nav-bar>
 
@@ -73,7 +70,7 @@
 </div>
 <div class="row">
 	<div class="col table_border_progress"></div>
-	<div class="col table_col table_footer"> <textarea ng-model="deliveryInstruction.data" style="width:100%"></textarea> </div>
+	<div class="col table_col table_footer"> <textarea ng-model="deliveryInstruction.data" style="width:100%;resize:none;height:70px;box-sizing:border-box;"></textarea> </div>
 </div>
 <div class="row">
 	<div class="col table_border_progress"></div>
@@ -305,7 +302,7 @@
 	<div class="col table_border_progress"></div>
 	<div class="col table_col table_footer">
 			<span ng-if="order_type == 1">Immediate Order</span>
-			<span ng-if="order_type == 2">Future - {{data.datetime | date : 'yyyy-MM-dd HH:mm:ss'}} </span>
+			<span ng-if="order_type == 2">Future - {{order_datetime}} </span>
 	</div>
 </div>
 

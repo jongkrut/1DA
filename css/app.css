@@ -449,6 +449,8 @@ legend {
 	border-right: 1px #bdbdbd solid;
 	border-left: 1px #bdbdbd solid;
 	font-size:12px;
+  box-sizing:border-box;
+  width:99%;
 }
 
 .table_footer{
@@ -459,6 +461,8 @@ legend {
 	border-right: 1px #bdbdbd solid;
 	border-left: 1px #bdbdbd solid;
 	font-size:12px;
+  box-sizing:border-box;
+  width:100%;
 }
 
 .footer_left{
@@ -481,6 +485,7 @@ legend {
 	width:1%;
 	border-right: 1px solid #bdbdbd;
 	flex:none;margin-right:15px;
+  box-sizing:border-box;
 }
 
 .table_col{
@@ -489,7 +494,7 @@ legend {
 	color: #444;
 	background-color:white;
 	border-left: 1px #bdbdbd solid;
-	font-size:12px;
+	font-size:12px;box-sizing:border-box;
 }
 
 .table_col_left{
@@ -499,6 +504,7 @@ legend {
 	background-color:white;
 	border-left: 1px #bdbdbd solid;
 	font-size:12px;
+  box-sizing:border-box;
 }
 
 .table_col_mid{
@@ -507,6 +513,7 @@ legend {
 	color: #444;
 	background-color:white;
 	font-size:12px;
+  box-sizing:border-box;
 }
 
 .table_col_right{
@@ -516,6 +523,7 @@ legend {
 	background-color:white;
 	border-right: 1px #bdbdbd solid;
 	font-size:12px;
+  box-sizing:border-box;
 }
 
 .bg_odd{

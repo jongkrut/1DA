@@ -58,16 +58,19 @@
 
 <script id="datetime-template.html" type="text/ng-template">
 	<ion-modal-view>
-		<ion-header-bar>
-			<h1 class="title">Please Select Date and Time</h1>
+		<ion-header-bar style="background-color:#3d3d3d;">
+			<h1 class="title" style="color:yellow">Please Select Date and Time</h1>
 		</ion-header-bar>
     <ion-content>
-		<div style="text-align:center;width:100%;padding:10px 0;">{{data.datetime | date : 'yyyy-MM-dd HH:mm:ss'}}</div>
-		<datetimepicker data-ng-model="data.datetime" min-date="minDate" show-weeks="true" data-datetimepicker-config="{ minuteStep: 30 }"></datetimepicker>
-		<div class="button-bar" style="margin-top:20px">
-			<button style="color:#3d3d3d;border-color: #3d3d3d;background-color:yellow;font-size:12px;font-weight:bold;padding:0 20px 0 20px;"ng-click="closeModal(1)" class="button button-calm">Immediate</button>
-			<button style="color:#3d3d3d;border-color: #3d3d3d;background-color:yellow;font-size:12px;font-weight:bold;padding:0 20px 0 20px;"ng-click="saveModal(1)" class="button button-balanced">OK</button>
-		</div>
+			<div class="padding" style="text-align:center;background-color:yellow;margin-top:10px;padding:10px 0;color:#3d3d3d">
+				Your Selected Time:<br/>
+				<strong>{{data.datetime | date : 'yyyy-MM-dd HH:mm:ss'}}</strong>
+			</div>
+			<datetimepicker data-ng-model="data.datetime" min-date="minDate" show-weeks="true" data-datetimepicker-config="{ minuteStep: 30 }"></datetimepicker>
+			<div class="button-bar padding" style="margin-top:20px">
+				<button style="color:#3d3d3d;border-color: #3d3d3d;background-color:yellow;font-size:12px;font-weight:bold;padding:0 20px 0 20px;"ng-click="closeModal(1)" class="button button-calm">Cancel</button>
+				<button style="color:#3d3d3d;border-color: #3d3d3d;background-color:yellow;font-size:12px;font-weight:bold;padding:0 20px 0 20px;"ng-click="saveModal(1)" class="button button-balanced">Checkout</button>
+			</div>
     </ion-content>
   </ion-modal-view>
 </script>
@@ -82,9 +85,6 @@
 	<ion-nav-buttons side="right">
 		<button class="button-clear" ng-click="toHome()">
 			<i class="ion-home icon-header" style="font-size:20px"></i>
-		</button>
-		<button class="button-clear">
-			<i class="ion-star icon-header" style="font-size:20px"></i>
 		</button>
 	</ion-nav-buttons>
 </ion-nav-bar>
@@ -183,26 +183,29 @@
 </nav>
 
 <nav ng-show="serviceType==2">
-
 	<div class="bar bar-dark padding" ng-hide="min_hit" ng-click="showAlert()" style="text-align:center">
 		<h1 class="title">Minimum Order {{min_transaction | currency : 'Rp ' : 0}}</h1>
 	</div>
 </nav>
 
-<div class="card" ng-show="min_hit" style="border-radius:10px;">
-	<div class="item item-text-wrap" style="text-align:center;background-color:#3d3d3d" ng-click="openModal(1)">
-		<span ng-if="data.datetimetype == 1" style="color:yellow;">Immediate Order (60mins) </span>
-		<span ng-if="data.datetimetype == 2" style="color:yellow;">Future - {{data.datetime | date : 'yyyy-MM-dd HH:mm:ss'}} </span>
-		<span ng-if="data.datetimetype == 1" style="color:gray;font-size:12px;"><br/>Tap here to change delivery time</span>
+<div class="padding" style="font-size:11px;background-color:#3d3d3d;color:white;margin-top:25px;font-size:14px;text-align:center">
+	Select your time to continue:
+</div>
+
+<div class="button-bar padding" style="margin-top:10px" ng-show="min_hit" >
+		<button class="button button-assertive" style="color:#3d3d3d;border-color: yellow;background-color:yellow;font-size:12px;font-weight:bold;padding:0 20px 0 20px;" ng-click="toCheckout()">
+				Immediate Order (60mins)
+    </button>
+</div>
+<div class="button-bar padding" style="margin-top:0px;width:100%" ng-show="min_hit" >
+	<div class="item item-text-wrap" style="text-align:center;background-color:#3d3d3d;color:yellow;width:100%;border:0;font-size:12px;" ng-click="openModal(1)">
+		Future Order <span ng-if="data.datetimetype == 2">{{data.datetime | date : 'yyyy-MM-dd HH:mm:ss'}}</span>
+		<br/><span style="color:gray">Tap here to change delivery time</span>
 	</div>
 </div>
 
 
-<div class="button-bar padding" style="margin-top:0px" ng-show="min_hit" >
-		<button class="button button-assertive" style="color:#3d3d3d;border-color: yellow;background-color:yellow;font-size:12px;font-weight:bold;padding:0 20px 0 20px;" ng-click="toCheckout()">
-        Continue to Checkout
-    </button>
-</div>
+
 
 
 <div style="height:50px;width:100%"></div>

@@ -11,15 +11,15 @@
 		<button class="button-clear" ng-click="toHome()">
 			<i class="ion-home icon-header" style="font-size:20px"></i>
 		</button>
-		<button class="button-clear">
-			<i class="ion-star icon-header" style="font-size:20px"></i>
+		<button class="button-clear" ng-click="toCart()">
+			<i class="ion-ios-cart-outline icon-header" style="font-size:20px"></i>
 		</button>
 	</ion-nav-buttons>
 </ion-nav-bar>
 
 <ion-content style="background-color:#eee;background-image: url(img/left_panel_bg.jpg) !important; background-repeat: repeat-y !important;">
 
-<div class="list">
+<div class="list padding">
 	<div class="item item_bb">{{customer.customer_name}}</div>
 	<div class="item item_bb">{{customer.phone}}</div>
 	<div class="item item_bb">{{customer.mobile}}</div>

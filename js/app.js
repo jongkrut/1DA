@@ -141,6 +141,11 @@ app.run(function($rootScope,$ionicNavBarDelegate,$ionicSideMenuDelegate,$ionicPo
      });
   });
 
+  $rootScope.reloadData =function(){
+    $http.get("http://128.199.235.202/area/fb.json").success(function(data){
+       Search.setArea(data.fatburger);
+    });
+  };
 	$rootScope.toHome = function() {
 		$location.path('/');
 	};
@@ -149,6 +154,8 @@ app.run(function($rootScope,$ionicNavBarDelegate,$ionicSideMenuDelegate,$ionicPo
     if(Cart.getTotalItems() > 0) {
       var outlet_id = Search.getOutlet();
       $location.path('/order/'+outlet_id+'/8/');
+    } else {
+      $location.path('/');
     }
   };
 
@@ -936,16 +943,14 @@ app.controller('checkoutCtrl',function($scope,$http,$stateParams,$ionicPopup,$io
 	$scope.totalItems = Cart.getTotalItems();
 	$scope.tax_service_charge = Cart.getTaxCharge()/100 * $scope.totalPrice;
 
-  console.log($scope.order_datetime);
-
   if($scope.serviceType == 1) {
     $scope.pickupLocation = Search.getOutletDetails();
   } else {
     $scope.deliveryAddress = Search.getDeliveryAddress();
-    console.log($scope.deliveryAddress);
     if($scope.deliveryAddress!=0) {
       $scope.addr = Customer.getAddressById($scope.deliveryAddress);
-      console.log($scope.addr);
+    } else {
+      $scope.deliveryType = Search.getDeliveryType();
     }
   }
 	$scope.saveAddress = function(address) {
@@ -974,7 +979,6 @@ app.controller('checkoutCtrl',function($scope,$http,$stateParams,$ionicPopup,$io
 		var test ={};
 		test.items = Cart.getAll();
 		test.customer_id = Customer.getCustomerID();
-		test.address_id = $scope.searchType;
 		test.outlet_id = $scope.outlet_id;
 		test.brand_id = $scope.brand_id;
 		test.tax_service_charge = $scope.tax_service_charge;
@@ -984,6 +988,9 @@ app.controller('checkoutCtrl',function($scope,$http,$stateParams,$ionicPopup,$io
 		test.subtotal = Cart.getTotalPrice();
 		test.order_type = Cart.getDeliveryType();
 		test.order_datetime = Cart.getDeliveryTime();
+    test.service_type = Search.getServiceType();
+    if(test.service_type  == 2)
+      test.address_id = Search.getDeliveryAddress();
 
 		$http({
 		    url: url + "/placeOrder.php",
@@ -1119,8 +1126,8 @@ app.controller('confirmationCtrl',function($scope,$http,$ionicLoading,$location,
 	$scope.logged_in = Customer.isLogged();
 	$scope.$on('state.update', function () {
     	$scope.logged_in = false;
-    });
-    $scope.customer_email = Customer.getCustomerEmail();
+  });
+  $scope.customer_email = Customer.getCustomerEmail();
 });
 
 
@@ -1199,7 +1206,8 @@ app.controller('aboutCtrl',function($scope,$stateParams,$ionicModal,$http,Cart,$
 	});
 });
 
-app.controller('storeListCtrl',function($scope,$http,Search){
+app.controller('storeListCtrl',function($scope,$rootScope,Search){
+  $rootScope.reloadData();
   $scope.list = Search.getArea();
 });
 
